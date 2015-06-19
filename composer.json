@@ -1,0 +1,32 @@
+{
+    "name": "islandfuture/sfw",
+    "description": "Simple FrameWork for PHP for rapid and easy developed internet services.",
+    "keywords": ["php","framework","sfw"],
+    "version":"1.0.0",
+    "license":"MIT",
+    "type":"library",
+    "authors": [
+        {
+            "name": "Michael Akimov",
+            "email": "michael@island-future.ru",
+            "homepage": "http://island-future.ru/"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/islandfuture/SFW.git"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.6.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "IslandFuture\\Sfw\\": "classes/"
+        }
+    }
+}

@@ -122,7 +122,11 @@ EOT;
         }
         /* end foreach */
         
-        $arFiles = $this->getListFilesEx($this->sPathMetaTemplates.'blocks'.DIRECTORY_SEPARATOR, 0, $this->sPathMetaGen.$this->sClassname.DIRECTORY_SEPARATOR.'blocks'.DIRECTORY_SEPARATOR);
+        $arVars = array(
+            '_class_' => strtolower($this->sClassname)
+        );
+        
+        $arFiles = $this->getListFilesEx($this->sPathMetaTemplates.'blocks'.DIRECTORY_SEPARATOR, 0, $this->sPathMetaGen.$this->sClassname.DIRECTORY_SEPARATOR.'blocks'.DIRECTORY_SEPARATOR, $arVars);
 
         foreach($arFiles as $sParse => $sFile) {
             \IslandFuture\Sfw\Template::one()->parse($sParse,$arVars);
@@ -134,8 +138,8 @@ EOT;
     /**
      * @return Array
      */
-    public function getListFilesEx($sPath, $iDepth, $sNewPath)
+    public function getListFilesEx($sPath, $iDepth, $sNewPath, $arVars=array())
     {
-        return \IslandFuture\Sfw\Tools::getListFilesEx($sPath, $iDepth, $sNewPath);
+        return \IslandFuture\Sfw\Tools::getListFilesEx($sPath, $iDepth, $sNewPath, $arVars);
     }
 }

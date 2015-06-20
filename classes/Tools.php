@@ -246,7 +246,7 @@ class Tools
         return password_verify($sPass, $sHash);
     }
 
-    public static function getListFilesEx($sPath, $iDepth, $sNewPath)
+    public static function getListFilesEx($sPath, $iDepth, $sNewPath,$arVars=array())
     {
         $arResult = array();
         if (! file_exists($sNewPath)) {
@@ -260,8 +260,11 @@ class Tools
             }
             
             if (is_dir($sPath.$sFile)) {
-                $sNewFile = str_replace('_class_',strtolower($this->sClassname),$sFile);
-                $arTmp = self::getListFilesEx($sPath.$sFile.DIRECTORY_SEPARATOR,$iDepth+1,$sNewPath.$sNewFile.DIRECTORY_SEPARATOR);
+                $sNewFile = $sFile;
+                foreach ($arVars as $key => $val) {
+                    $sNewFile = str_replace($key,$val,$sFile);
+                }
+                $arTmp = self::getListFilesEx($sPath.$sFile.DIRECTORY_SEPARATOR,$iDepth+1,$sNewPath.$sNewFile.DIRECTORY_SEPARATOR, $arVars);
                 $arResult = array_merge($arResult,$arTmp);
             } else {
                 $arResult[ $sPath.$sFile ] = $sNewPath.$sFile;

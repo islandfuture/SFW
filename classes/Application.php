@@ -53,6 +53,8 @@ class Application extends Only
         /* DOCUMENT_ROOT must set to public directory, and all code set up level */
         if (empty($_SERVER['DOCUMENT_ROOT'])) {
             $_SERVER['DOCUMENT_ROOT'] = dirname(realpath(__DIR__ .DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'..')).DIRECTORY_SEPARATOR.'public';
+        } else {
+            $_SERVER['DOCUMENT_ROOT'] = realpath($_SERVER['DOCUMENT_ROOT']);
         }
         
         $sPublicPath = $_SERVER['DOCUMENT_ROOT'].DIRECTORY_SEPARATOR;
@@ -80,13 +82,13 @@ class Application extends Only
             spl_autoload_register(array($this, 'appAutoload' ), false);
         }
 
-        $this->arConfig['PATH_ROOT'] = dirname($_SERVER['DOCUMENT_ROOT']);
+        $this->arConfig['PATH_ROOT'] = dirname($_SERVER['DOCUMENT_ROOT']).DIRECTORY_SEPARATOR;
         $this->arConfig['PATH_APP'] = $sAppPath;
         $this->arConfig['PATH_PAGES'] = $sAppPath.'pages'.DIRECTORY_SEPARATOR;
         $this->arConfig['PATH_PUBLIC'] = $sPublicPath;
         $this->arConfig['PATH_VENDOR'] = $sVendorPath;
         $this->arConfig['PATH_SFW'] = $sSfwPath;
-        
+ 
         $this->arBlockVars['lasterror'] = '';
         $this->arBlockVars['lastmessage'] = '';
         $this->arBlockVars['js_bottom'] = array();
@@ -131,15 +133,7 @@ class Application extends Only
 
             $sPath = $this->PATH_PAGES;
 
-            if (! file_exists($sPath.$this->sCurPage.'.php')) {
-                if (! file_exists($sPath.$this->sCurPage.DIRECTORY_SEPARATOR.'index.php')) {
-                    $this->arBlockVars['lasterror'] = $this->sCurPage;
-                    throw new \Exception('Страница: "'.$this->sCurPage.DIRECTORY_SEPARATOR.'index.php" или "'.DIRECTORY_SEPARATOR.$this->sCurPage.'.php" не найдена');
-                } else {
-                    $this->sCurPage = $this->sCurPage.'/index';
-                }
-            }
-
+            $this->route();
             $this->validateAccess($this->sCurPage);
 
             ob_start();
@@ -236,28 +230,6 @@ class Application extends Only
         }
 
     }//end function run
-
-    /**
-     * Проверяем доступ на просмотр текущей страницы
-     */
-    public function validateAccess()
-    {
-        $arAccess = $this->arAccess;
-        if (! $arAccess || sizeof($arAccess) == 0) {
-            return true;
-        }
-        /*
-        $sPage = $this->sCurPage;
-        do
-        {
-            if (! empty($arAccess[$sPage]))
-            {
-                
-            }
-        } while( $sPage > '' );
-        */
-        return false;
-    }
 
     // функция для автозагрузки классов
     public function appAutoload($sClassName)
@@ -614,4 +586,85 @@ class Application extends Only
         
         return false;
     }//end function
+    
+    /**
+     * метод входящий ЧПУ роутит на нужный скрипт. Конфиг роутинга лежит в /config/route.php
+     * @return boolean
+     */
+    public function route()
+    {
+        $sPath = $this->PATH_PAGES;
+        
+        if (file_exists($sPath.$this->sCurPage.'.php')) {
+            return true;
+        }
+        
+        if (file_exists($sPath.$this->sCurPage.DIRECTORY_SEPARATOR.'index.php')) {
+            $this->sCurPage = $this->sCurPage.'/index';
+            return true;
+        }
+
+        $sFname = $this->route > '' ? $this->route : 'route.php';
+        $sRouteFile = $this->PATH_ROOT.'config'.DIRECTORY_SEPARATOR.$sFname;
+
+        if (! file_exists($sRouteFile)) {
+            throw new \Exception('Cannot find route file ['.$sFname.']');
+        }
+        
+        $arRoutes = include_once $sRouteFile;
+        
+        $arParts = explode('/', $this->sCurPage);
+        $this->sCurPage = '';
+        $arCurRoute = $arRoutes;
+        foreach ($arParts as $iDepth => $sPart) {
+            if (isset($arCurRoute[$sPart])) {
+                $this->sCurPage .= '/'.$sPart;
+                $arCurRoute = $arCurRoute[$sPart];
+            } elseif (is_numeric($sPart) && isset($arCurRoute[':num:'])) {
+                if (isset($arCurRoute[':num:']['+'])) {
+                    $_REQUEST[$arCurRoute[':num:']['+']] = $_GET[$arCurRoute[':num:']['+']] = $sPart;
+                }
+                
+                if (isset($arCurRoute[':num:']['=>'])) {
+                    $arCurRoute = $arCurRoute[':num:']['=>'];
+                }
+            }
+        }
+        
+        $this->sCurPage .= '/'.(isset($arCurRoute[':end:']) ? $arCurRoute[':end:'] : 'index');
+        
+        if (file_exists($sPath.$this->sCurPage.'.php')) {
+            return true;
+        }
+
+        $this->arBlockVars['lasterror'] = $this->sCurPage;
+        throw new \Exception('Страница: "'.$this->sCurPage.DIRECTORY_SEPARATOR.'index.php" или "'.DIRECTORY_SEPARATOR.$this->sCurPage.'.php" не найдена');
+    }
+    
+    
+    /**
+     * Проверяем доступ на просмотр текущей страницы
+     */
+    public function validateAccess()
+    {
+        /* arAccess defined in init method */
+        
+        $arAccess = $this->arAccess;
+        if (! $arAccess || sizeof($arAccess) == 0) {
+            return true;
+        }
+        /*
+        $sPage = $this->sCurPage;
+        do
+        {
+            if (! empty($arAccess[$sPage]))
+            {
+                
+            }
+        } while( $sPage > '' );
+        */
+        return false;
+    }
+
+
 }

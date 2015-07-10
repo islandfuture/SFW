@@ -4,7 +4,7 @@ namespace IslandFuture\Sfw;
 class ActiveUser extends Only
 {
     // @var string в свойстве хранится название класса, которое отвечает за хранение данных юзера в БД
-    public $sUserClassName = 'Users';
+    public static $sUserClassName = 'Users';
     
     // @var \IslandFuture\Sfw\Data\Model клас отвечающий за данные о пользователе
     protected $oCurrentUser = null;
@@ -36,7 +36,7 @@ class ActiveUser extends Only
     protected function afterConstruct($arParams)
     {
         if ($arParams && ! empty($arParams['sModel'])) {
-            $this->sUserClassName = $arParams['sModel'];
+            self::$sUserClassName = $arParams['sModel'];
         }
 
         $this->hasError = (! session_start());
@@ -44,7 +44,7 @@ class ActiveUser extends Only
         if (empty($_SESSION['SFW_USER'])) {
             $_SESSION['SFW_USER'] = array();
         }
-        $this->oCurrentUser = \IslandFuture\Sfw\Data\Storages::model($this->sUserClassName);
+        $this->oCurrentUser = \IslandFuture\Sfw\Data\Storages::model(self::$sUserClassName);
         $this->oCurrentUser->attributes($_SESSION['SFW_USER']);
         return true;
     }
@@ -57,7 +57,7 @@ class ActiveUser extends Only
         if (! $this->isSynchronized && $isNeedSynchro && ($this->__get($sKey) > '')) {
             $this->oCurrentUser = \IslandFuture\Sfw\Data\Storages::getOne(
                 array(
-                    'sModel' => $this->sUserClassName,
+                    'sModel' => self::$sUserClassName,
                     'arFilter' => array(
                         $sKey => array('=' => $this->__get($sKey) )
                     )
@@ -76,7 +76,7 @@ class ActiveUser extends Only
 
     public function getName()
     {
-        return $this->sName > '' ? $this->sName : 'Мистер Х';
+        return $this->oCurrentUser->getName();
     }
 
     public function login($arParams = array())
@@ -84,12 +84,14 @@ class ActiveUser extends Only
         foreach ($arParams as $key => $val) {
             $this->__set($key, $val);
         }
+        
+        $this->oCurrentUser->attributes($_SESSION['SFW_USER']);
     }
 
     public function logout()
     {
         $this->id = null;
-        $this->oCurrentUser = \IslandFuture\Sfw\Data\Storages::model($this->sUserClassName);
+        $this->oCurrentUser = \IslandFuture\Sfw\Data\Storages::model(self::$sUserClassName);
         $_SESSION['SFW_USER'] = array();
     }
 }

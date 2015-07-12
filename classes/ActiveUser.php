@@ -44,8 +44,14 @@ class ActiveUser extends Only
         if (empty($_SESSION['SFW_USER'])) {
             $_SESSION['SFW_USER'] = array();
         }
-        $this->oCurrentUser = \IslandFuture\Sfw\Data\Storages::model(self::$sUserClassName);
-        $this->oCurrentUser->attributes($_SESSION['SFW_USER']);
+        
+        if (self::$sUserClassName != 'none') {
+            $this->oCurrentUser = \IslandFuture\Sfw\Data\Storages::model(self::$sUserClassName);
+            $this->oCurrentUser->attributes($_SESSION['SFW_USER']);
+        } else {
+            $this->oCurrentUser = new \stdClass();
+            $this->oCurrentUser = $_SESSION['SFW_USER'];
+        }
         return true;
     }
     
@@ -76,7 +82,11 @@ class ActiveUser extends Only
 
     public function getName()
     {
-        return $this->oCurrentUser->getName();
+        if (self::$sUserClassName != 'none') {
+            return $this->oCurrentUser->getName();
+        } else {
+            return 'none';
+        }
     }
 
     public function login($arParams = array())
@@ -85,13 +95,21 @@ class ActiveUser extends Only
             $this->__set($key, $val);
         }
         
-        $this->oCurrentUser->attributes($_SESSION['SFW_USER']);
+        if (self::$sUserClassName != 'none') {
+            $this->oCurrentUser->attributes($_SESSION['SFW_USER']);
+        } else {
+            $this->oCurrentUser = $_SESSION['SFW_USER'];
+        }
     }
 
     public function logout()
     {
         $this->id = null;
-        $this->oCurrentUser = \IslandFuture\Sfw\Data\Storages::model(self::$sUserClassName);
+        if (self::$sUserClassName != 'none') {
+            $this->oCurrentUser = \IslandFuture\Sfw\Data\Storages::model(self::$sUserClassName);
+        } else {
+            $this->oCurrentUser = new \stdClass();
+        }
         $_SESSION['SFW_USER'] = array();
     }
 }

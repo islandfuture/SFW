@@ -20,5 +20,8 @@ return array(
         'EMAIL_CONTACT_NAME' => 'Site Name',
         'EMAIL_AUTH'         => false
     ),
+    'user' => 'none', // если сессия должна быть связана с моделью юзера, то указываем название модели 'Users' иначе пишем 'none',
+    'route' => 'route.php',
+
     'debug' => 'Y'
 );

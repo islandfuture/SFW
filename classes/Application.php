@@ -126,6 +126,7 @@ class Application extends Only
                 }
             }//end if
 
+            ActiveUser::$sUserClassName = $this->user > '' ? $this->user : 'none';
             $session = ActiveUser::one();
             if ($session->hasError()) {
                 throw new \Exception('Cannot start user session');

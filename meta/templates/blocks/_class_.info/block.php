@@ -15,7 +15,7 @@ if($this->id > 0) {
     $this->oModel = \IslandFuture\Sfw\Data\Storages::getOne(array(
             'sModel' => '<:classname:>',
             'arFilter' => array(
-                '<:id_default:>' => array('=' => $this->id )
+                '<:id_name:>' => array('=' => $this->id )
             )
         )
     );
@@ -23,6 +23,14 @@ if($this->id > 0) {
     $this->oModel = \IslandFuture\Sfw\Data\Storages::model('<:classname:>');
 }
 
+if ($this->modeedit == true) {
+    if ($this->oModel-><:id_name:> > '') {
+        \IslandFuture\Sfw\Application::one()->setTitle('Форма редактирования');
+    } else {
+        \IslandFuture\Sfw\Application::one()->setTitle('Форма создания');
+    }
+
+}
 if($this->modeedit == true && isset($_REQUEST['<:classname:>'])) {
     $this->oModel->attributes($_REQUEST['<:classname:>']);
     

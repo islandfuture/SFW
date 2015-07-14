@@ -4,6 +4,10 @@ namespace IslandFuture\Sfw;
 /**
  * Класс "Приложение", отвечающий за инициализацию, определения страницы отображения,
  * первичной обработки входных данных, контролем текущих процессов и отображением выходных данных
+ * 
+ * @author     Michael Akimov <michael@island-future.ru>
+ * @version    GIT: $Id$
+ * 
  * @example Application::one()->init()->run();
  */
 class Application extends Only

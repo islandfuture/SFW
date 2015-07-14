@@ -1025,8 +1025,8 @@ class Storages extends \IslandFuture\Sfw\Only {
 
     public function getLastID($name=NULL)
     {
-        $rows = $this->getStorage()->lastInsertId($name);
-        return $rows;
+        $val = $this->getStorage()->lastInsertId($name);
+        return $val;
     }
 
     public function errorInfo()

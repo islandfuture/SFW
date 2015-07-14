@@ -2,7 +2,7 @@
 namespace IslandFuture\Sfw;
 
 /**
- * @version rev: $Id:$
+ * @version GIT: $Id$
  * @author Michael Akimov <michael@island-future.ru>
  * 
  * @description  класс "Одиночный/Singleton", необходим для создания только одного экземпляра

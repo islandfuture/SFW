@@ -33,7 +33,7 @@ class Block extends Only {
      *     (например буферизировать вывод или нет, кешировать или нет) \
      * @return Block
      */
-    public function run( $sBlockName, $arParams=array(), $arSysParams=array() )
+    public function run($sBlockName, $arParams=array(), $arSysParams=array())
     {
         $this->iCur++;
         $this->arParams[$this->iCur] = array();

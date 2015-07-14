@@ -4,6 +4,8 @@ namespace IslandFuture\Sfw\Meta;
 /**
  * Класс предназначен для генерации различного рода блоков по мета-модели или обычной модели
  *
+ * @author     Michael Akimov <michael@island-future.ru>
+ * @version    GIT: $Id$
  */
 class Generator extends Task
 {
@@ -24,6 +26,9 @@ class Generator extends Task
         $this->sDatabase = $arMeta['sDatabase'];
         $this->sTablename = $arMeta['sTable'];
         $this->sTitlename = empty($arMeta['sTitle']) ? $arMeta['sClassname'] : $arMeta['sTitle'];
+
+        $this->sComment = empty($arMeta['sComment']) ? '' : $arMeta['sComment'];
+        $this->sCodepage = empty($arMeta['sCodepage']) ? 'utf8' : $arMeta['sCodepage'];
 
         $this->arFields = $arMeta['arFields'];
         $this->arRelations = $arMeta['arRelations'];

@@ -63,14 +63,14 @@ class Db2metaGenerator extends Generator
                     )
                 ) {
                     $sCodepage = 'ascii';
-                    $sBinnary = 'yes';
+                    $sBinary = 'yes';
                 } else {
                     if ( isset($arField['Collation']) && $arField['Collation'] == 'ascii_bin') {
                         $sCodepage = 'ascii';
-                        $sBinnary = 'bin';
+                        $sBinary = 'bin';
                     } else {
                         $sCodepage = 'utf8';
-                        $sBinnary = 'no';
+                        $sBinary = 'no';
                     }
                 }
     
@@ -79,7 +79,7 @@ class Db2metaGenerator extends Generator
                         "            'sType' => '".$sType."',\n".
                         "            'sPrimary' => '".$isPrimary."',\n".
                         "            'sCodepage' => '".$sCodepage."',\n".
-                        "            'sBinnary' => '".$sBinnary."',\n".
+                        "            'sBinary' => '".$sBinary."',\n".
                         "            'sDefault' => '".$arField['Default']."',\n".
                         "            'sComment' => '".$arField['Comment']."',\n".
                         "            'isNull' => '".$isNull."'\n".
@@ -90,7 +90,7 @@ class Db2metaGenerator extends Generator
                         "            'sPrimary' => '".$isPrimary."',\n".
                         "            'iLength' => '".$iLength."',\n".
                         "            'sCodepage' => '".$sCodepage."',\n".
-                        "            'sBinnary' => '".$sBinnary."',\n".
+                        "            'sBinary' => '".$sBinary."',\n".
                         "            'sDefault' => '".$arField['Default']."',\n".
                         "            'sComment' => '".$arField['Comment']."',\n".
                         "            'isNull' => '".$isNull."'\n".

@@ -17,8 +17,20 @@ class UsersAuto extends \IslandFuture\Sfw\Data\Model  {
         return 'Users';
     }
 
+    /**
+     * функция возвращает название первичного ключа
+     * @return string
+     */
     public static function getIdName() {
         return 'id';
+    }
+
+    /**
+     * функция возвращает способ генерации значения первичного ключа
+     * @return string
+     */
+    public static function getIdDefault() {
+        return 'UUID'; //'AUTOINC';
     }
 
     /**
@@ -29,9 +41,6 @@ class UsersAuto extends \IslandFuture\Sfw\Data\Model  {
         return 'Пользователи';
     }
     
-    public static function getIdDefault() {
-        return 'UUID'; //'AUTOINC';
-    }
 
     public static function getClearFields() {
         return array
@@ -45,10 +54,6 @@ class UsersAuto extends \IslandFuture\Sfw\Data\Model  {
             'sActivation'=> null,
             'sCheckword'=> null,
             'tBirthdate'=> null,
-            'iAccountId'=> null,
-            'iGeoId'=> null,
-            'sTokenFb'=> null,
-            'sTokenVk'=> null,
             'tCreated'=> null,
             'tModified'=> null,
             'tLastActivity'=> null,
@@ -56,8 +61,6 @@ class UsersAuto extends \IslandFuture\Sfw\Data\Model  {
             'sLastIp'=> null,
             'iRoleId'=> null,
             'sPhone' => null,
-            'sOrgName' => null,
-            'sPosition' => null,
             'iStatusId' => null,
         );
     }

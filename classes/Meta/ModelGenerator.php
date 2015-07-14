@@ -22,6 +22,11 @@ class ModelGenerator extends Generator
             mkdir($this->sPathMetaGen.$this->sClassname.DIRECTORY_SEPARATOR.'models');
         }
         
+        if (! $this->arFields || sizeof($this->arFields) == 0) {
+            echo "Not found field for model [".$this->sClassname."]\n";
+            return false;
+        }
+
         $this->saveModel();
     }
     
@@ -39,14 +44,20 @@ class ModelGenerator extends Generator
 
         foreach ($this->arFields as $sField => $arField) {
             if (isset($arField['sPrimary']) && 'yes'==$arField['sPrimary']) {
-                $arVars['id_default'] = $sField;
+                $arVars['id_name'] = $sField;
+                
+                if (empty($this->arField['sDefault'])) {
+                    $arVars['id_default'] = '';
+                } else {
+                    $arVars['id_default'] = $this->arField['sDefault'];
+                }
+            } elseif (isset($arField['sDefault'])) {
+                $arVars['defaults'] .= "            '".$sField."' => '".$arField['sDefault']."',\n";
             }
 
             $arVars['clear_fields'] .= "            '".$sField."' => null,\n";
             
-            if (isset($arField['sDefault'])) {
-                $arVars['defaults'] .= "            '".$sField."' => '".$arField['sDefault']."',\n";
-            }
+            
         }
 
         // $arVars['clear_fields'] = "        return array\n        (".$arVars['clear_fields']."        );\n";

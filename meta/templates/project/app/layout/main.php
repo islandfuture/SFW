@@ -11,11 +11,27 @@
   ================================================== -->
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+    
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 
 </head>
 <body>
-    
-<?=\IslandFuture\Sfw\Application::one()->sPageContent ?>
+
+<div class="container">
+    <h1><?=\IslandFuture\Sfw\Application::one()->getTitle() ?></h1>
+
+	<?=\IslandFuture\Sfw\Application::one()->sPageContent ?>
+</div>
+
+<?php
+$this->block('common.counter', array(), array());
+?>
 
 </body>
 </html>

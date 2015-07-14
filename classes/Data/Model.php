@@ -167,7 +167,7 @@ class Model
 				if (is_array($mRelation)) {
 					$arResult[] = '<option value="' . $idx . '" ' . ($idx == $selected ? 'selected="selected"' : '') . '>' . $mRelation[0] . '</option>';
 				} else {
-					$sKey = $mRelation::getIdDefault();
+					$sKey = $mRelation::getIdName();
 					$arResult[] = '<option value="' . $mRelation->{$sKey} . '" ' . ($mRelation->{$sKey} == $selected ? 'selected="selected"' : '') . '>' . $mRelation->{$sViewField} . '</option>';
 				}
 			}/* end foreach */

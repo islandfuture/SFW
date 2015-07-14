@@ -4,6 +4,9 @@ namespace IslandFuture\Sfw\Meta;
 /**
  * Класс предназначен для генерации различного рода блоков по мета-модели
  *
+ * @author     Michael Akimov <michael@island-future.ru>
+ * @version    GIT: $Id$
+ * 
  */
 class BlocksGenerator extends Generator
 {
@@ -17,14 +20,121 @@ class BlocksGenerator extends Generator
             mkdir($this->sPathMetaGen.$this->sClassname);
         }
 
-        if (! file_exists($this->sPathMetaGen.$this->sClassname.DIRECTORY_SEPARATOR.'models')) {
-            echo "Creade dir: ".$this->sPathMetaGen.$this->sClassname.DIRECTORY_SEPARATOR."models\n";
-            mkdir($this->sPathMetaGen.$this->sClassname.DIRECTORY_SEPARATOR.'models');
+        if (! file_exists($this->sPathMetaGen.$this->sClassname.DIRECTORY_SEPARATOR.'blocks')) {
+            echo "Creade dir: ".$this->sPathMetaGen.$this->sClassname.DIRECTORY_SEPARATOR."blocks\n";
+            mkdir($this->sPathMetaGen.$this->sClassname.DIRECTORY_SEPARATOR.'blocks');
+        }
+        
+        if (! $this->arFields || sizeof($this->arFields) == 0) {
+            echo "Not found field for model [".$this->sClassname."]\n";
+            return false;
+        }
+
+        if ($this->sWebSubDir == '') {
+            $this->sWebSubDir = '/admin/'.strtolower($this->sClassname).'/';
         }
         
         $this->saveBlockInfo();
+        $this->saveBlockDel();
+        $this->saveBlockList();
     }
     
+    public function saveBlockList ()
+    {
+        $arVars = array();
+        $arVars['classname'] = $this->sClassname;
+        $arVars['classlower'] = strtolower($this->sClassname);
+        $arVars['tablename'] = $this->sTablename;
+        $arVars['database'] = $this->sDatabase;
+        $arVars['titlename'] = $this->sTitlename;
+
+        $arVars['websubdir'] = $this->sWebSubDir;
+        
+        $arVars['_class_'] = strtolower($this->sClassname);
+
+        $arVars['value_fields'] = '';
+        $arVars['sort_fields'] = '';
+        $arVars['option_fields'] = '';
+        $arVars['defaults'] = '';
+        $arVars['relations_fields'] = '';
+
+        $arVars['primary_type'] = '(int)';
+        
+        $arFieldRelations = array();
+        /* перебираем все отношения и связываем их с полями */
+        foreach ($this->arRelations as $sRelation => $arRelation) {
+            $sKey = $arRelation[1];
+            if (isset($this->arFields[$sKey])) {
+                $arFieldRelations[$sKey] = $arRelation;
+                $arFieldRelations[$sKey]['sRelName'] = $sRelation;
+            }
+        }
+        
+        
+        foreach ($this->arFields as $sField => $arField) {
+            $sTitle = (isset($arField['sTitle']) ? $arField['sTitle'] : $sField);
+            $arVars['option_fields'] .= "                ".'<option value="'.$sField.'" <?=($key==\''.$sField.'\' ? \'selected="selected"\' : \'\')?>>'.$sTitle.'</option>'."\n";
+            
+            if (isset($arField['sPrimary']) && 'yes'==$arField['sPrimary']) {
+                $arVars['id_name'] = $sField;
+                if ('char' == $arField['sType'] || 'varchar' == $arField['sType']) {
+                    $arVars['primary_type'] = '(string)';
+                }
+            }
+            
+            if (($arField['sType']!='varchar' && $arField['sType']!='text') || ($arField['sType']=='varchar' && $arField['iLength'] < 257)) {
+
+                $arVars['sort_fields'] .= '                    <th><a href="?sort='.$sField.'&dir=<?=isset($this->sort[\''.$sField.'\']) && $this->sort[\''.$sField.'\']==\'asc\' ? \'desc\' : \'asc\' ?>">'.$sTitle.'</a></th>'."\n";
+                $arVars['value_fields'] .= '                    <td><?=$oModel->'.$sField.'; ?></td>'."\n";
+            }
+        }
+        
+        $arFiles = $this->getListFilesEx($this->sPathMetaTemplates.'blocks'.DIRECTORY_SEPARATOR.'_class_.list'.DIRECTORY_SEPARATOR, 0, $this->sPathMetaGen.$this->sClassname.DIRECTORY_SEPARATOR.'blocks'.DIRECTORY_SEPARATOR.$arVars['classlower'].'.list'.DIRECTORY_SEPARATOR, $arVars);
+
+        foreach($arFiles as $sParse => $sFile) {
+            \IslandFuture\Sfw\Template::one()->parse($sParse,$arVars);
+            echo 'Save file: '.$sFile."\n";
+            \IslandFuture\Sfw\Template::one()->saveTo($sFile);
+        }
+    }
+    
+    public function saveBlockDel ()
+    {
+        $arVars = array();
+        $arVars['classname'] = $this->sClassname;
+        $arVars['classlower'] = strtolower($this->sClassname);
+        $arVars['tablename'] = $this->sTablename;
+        $arVars['database'] = $this->sDatabase;
+        $arVars['titlename'] = $this->sTitlename;
+
+        $arVars['websubdir'] = $this->sWebSubDir;
+
+        $arVars['_class_'] = strtolower($this->sClassname);
+
+        $arVars['clear_fields'] = '';
+        $arVars['defaults'] = '';
+        $arVars['relations_fields'] = '';
+
+        $arVars['primary_type'] = '(int)';
+        foreach ($this->arFields as $sField => $arField) {
+            
+            if (isset($arField['sPrimary']) && 'yes'==$arField['sPrimary']) {
+                $arVars['id_name'] = $sField;
+                if ('char' == $arField['sType'] || 'varchar' == $arField['sType']) {
+                    $arVars['primary_type'] = '(string)';
+                }
+            }
+        }
+
+        $arFiles = $this->getListFilesEx($this->sPathMetaTemplates.'blocks'.DIRECTORY_SEPARATOR.'_class_.del'.DIRECTORY_SEPARATOR, 0, $this->sPathMetaGen.$this->sClassname.DIRECTORY_SEPARATOR.'blocks'.DIRECTORY_SEPARATOR.$arVars['classlower'].'.del'.DIRECTORY_SEPARATOR, $arVars);
+
+        foreach($arFiles as $sParse => $sFile) {
+            \IslandFuture\Sfw\Template::one()->parse($sParse,$arVars);
+            echo 'Save file: '.$sFile."\n";
+            \IslandFuture\Sfw\Template::one()->saveTo($sFile);
+        }
+    }
+
     public function saveBlockInfo ()
     {
         $arVars = array();
@@ -33,6 +143,10 @@ class BlocksGenerator extends Generator
         $arVars['tablename'] = $this->sTablename;
         $arVars['database'] = $this->sDatabase;
         $arVars['titlename'] = $this->sTitlename;
+
+        $arVars['websubdir'] = $this->sWebSubDir;
+
+        $arVars['_class_'] = strtolower($this->sClassname);
 
         $arVars['clear_fields'] = '';
         $arVars['defaults'] = '';
@@ -57,14 +171,14 @@ class BlocksGenerator extends Generator
             }
 
             if (isset($arField['sPrimary']) && 'yes'==$arField['sPrimary']) {
-                $arVars['id_default'] = $sField;
+                $arVars['id_name'] = $sField;
                 if ('char' == $arField['sType'] || 'varchar' == $arField['sType']) {
                     $arVars['primary_type'] = '(string)';
                 }
             } else {
 
-                if ( isset($arField['iLength']) && $arField['iLength'] > 128) {
-                    $iRows = floor($arField['iLength']/128);
+                if ((isset($arField['iLength']) && $arField['iLength'] > 256) || ('text' == $arField['sType'])) {
+                    $iRows = ('text' == $arField['sType'] ? 7 : floor($arField['iLength']/128));
                     $arVars['clear_fields'] .= <<<EOT
 
     <div class="form-group">
@@ -122,11 +236,7 @@ EOT;
         }
         /* end foreach */
         
-        $arVars = array(
-            '_class_' => strtolower($this->sClassname)
-        );
-        
-        $arFiles = $this->getListFilesEx($this->sPathMetaTemplates.'blocks'.DIRECTORY_SEPARATOR, 0, $this->sPathMetaGen.$this->sClassname.DIRECTORY_SEPARATOR.'blocks'.DIRECTORY_SEPARATOR, $arVars);
+        $arFiles = $this->getListFilesEx($this->sPathMetaTemplates.'blocks'.DIRECTORY_SEPARATOR.'_class_.info'.DIRECTORY_SEPARATOR, 0, $this->sPathMetaGen.$this->sClassname.DIRECTORY_SEPARATOR.'blocks'.DIRECTORY_SEPARATOR.$arVars['classlower'].'.info'.DIRECTORY_SEPARATOR, $arVars);
 
         foreach($arFiles as $sParse => $sFile) {
             \IslandFuture\Sfw\Template::one()->parse($sParse,$arVars);

@@ -22,16 +22,10 @@
 
 </head>
 <body>
-
 <div class="container">
     <h1><?=\IslandFuture\Sfw\Application::one()->getTitle() ?></h1>
 
-	<?=\IslandFuture\Sfw\Application::one()->sPageContent ?>
+    <?=\IslandFuture\Sfw\Application::one()->sPageContent ?>
 </div>
-
-<?php
-$this->block('common.counter', array(), array());
-?>
-
 </body>
 </html>

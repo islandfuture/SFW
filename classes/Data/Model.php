@@ -128,12 +128,7 @@ class Model
      * @return mixed
      */
     public function __get($name)
-    {
-        $idxLinkType = 0;
-        $idxLocalField = 1;
-        $idxLinkModel = 2;
-        $idxLinkField = 3;
-        
+    {        
         if (! $name) {
 			return null; 
         }
@@ -142,7 +137,7 @@ class Model
             return $this->arFields[$name];
         }
 
-        throw new \Exception('Unknown fields [' . $name . '] in class [' . get_class($this) . ']');
+        throw new \RuntimeException('Unknown fields [' . $name . '] in class [' . get_class($this) . ']');
     }
 
     public function __set($name, $val)
@@ -154,7 +149,7 @@ class Model
         if (key_exists($name, $this->arFields)) {
             $this->arFields[$name] = $val;
         } else {
-            throw new \Exception('Нельзя присвоить значение неизвестному полю [' . $name . '] в классе [' . get_class($this) . ']');
+            throw new \RuntimeException('Нельзя присвоить значение неизвестному полю [' . $name . '] в классе [' . get_class($this) . ']');
         }
     }
 

@@ -470,9 +470,6 @@ class Storages extends \IslandFuture\Sfw\Only
                 $arParametrs['arFilter'] = Array();
             }
 
-            $arSelect = array();
-
-
             /* Собираем SQL */
             $sSql = static::generateSelectSQL($arParametrs);
 
@@ -486,7 +483,7 @@ class Storages extends \IslandFuture\Sfw\Only
                 $arResult = $st->fetchAll();
 
                 if (!empty($arSysOptions['index'] )) {
-                    $idname     = $sClassName::getIdName();
+                    $idName     = $sClassName::getIdName();
                     $arTmp = array();
                     foreach($arResult as $obTmp )
                     {
@@ -645,7 +642,7 @@ class Storages extends \IslandFuture\Sfw\Only
             static::$arErrors[$sClassName] = array();
         }//end if
 
-        if (empty(static::$arErrors[$sClassName][$field])) {
+        if (empty(static::$arErrors[$sClassName][$sField])) {
             static::$arErrors[$sClassName][$sField] = array();
         }
         static::$arErrors[$sClassName][$sField][] = $sError;

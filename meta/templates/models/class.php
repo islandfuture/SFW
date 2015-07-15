@@ -1,5 +1,5 @@
 <?php
-include '<:classname:>Auto.php';
+require '<:classname:>Auto.php';
 
 /**
  * здесь Вы можете добавлять свои функции и обработчики для модели <:classname:>

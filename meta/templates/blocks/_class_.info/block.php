@@ -12,7 +12,8 @@ if ($this->id == '' && $this->key > '') {
 }
 
 if($this->id > 0) {
-    $this->oModel = \IslandFuture\Sfw\Data\Storages::getOne(array(
+    $this->oModel = \IslandFuture\Sfw\Data\Storages::getOne(
+        array(
             'sModel' => '<:classname:>',
             'arFilter' => array(
                 '<:id_name:>' => array('=' => $this->id )
@@ -31,7 +32,8 @@ if ($this->modeedit == true) {
     }
 
 }
-if($this->modeedit == true && isset($_REQUEST['<:classname:>'])) {
+
+if ($this->modeedit == true && isset($_REQUEST['<:classname:>'])) {
     $this->oModel->attributes($_REQUEST['<:classname:>']);
     
     if (! $this->oModel->save()) {

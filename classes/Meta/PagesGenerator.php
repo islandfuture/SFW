@@ -3,13 +3,12 @@ namespace IslandFuture\Sfw\Meta;
 
 /**
  * Класс предназначен для генерации различного рода блоков по мета-модели или обычной модели
- *
  */
 class PagesGenerator extends Generator
 {
     // declare in parents: protected $arParams = array();
     
-    public function generate ()
+    public function generate()
     {
         if (! file_exists($this->sPathMetaGen.$this->sClassname)) {
             echo "Creade dir: ".$this->sPathMetaGen.$this->sClassname."\n";
@@ -51,7 +50,7 @@ class PagesGenerator extends Generator
         $arFiles =  \IslandFuture\Sfw\Tools::getListFilesEx($this->sPathMetaTemplates.'pages'.DIRECTORY_SEPARATOR, 0, $this->sPathMetaGen.$this->sClassname.DIRECTORY_SEPARATOR.'pages'.DIRECTORY_SEPARATOR.$arVars['classlower'].DIRECTORY_SEPARATOR, $arVars);
 
         foreach($arFiles as $sParse => $sFile) {
-            \IslandFuture\Sfw\Template::one()->parse($sParse,$arVars);
+            \IslandFuture\Sfw\Template::one()->parse($sParse, $arVars);
             echo 'Save file: '.$sFile."\n";
             \IslandFuture\Sfw\Template::one()->saveTo($sFile);
         }

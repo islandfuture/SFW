@@ -4,7 +4,8 @@
  * Если хотите добавить или изменить свойства, то делать это нужно в
  * дочернем классе Busers
  */
-class UsersAuto extends \IslandFuture\Sfw\Data\Model  {
+class UsersAuto extends \IslandFuture\Sfw\Data\Model
+{
     
     public $uidMin=1000000;
     public $uidMax=10000000;
@@ -13,7 +14,8 @@ class UsersAuto extends \IslandFuture\Sfw\Data\Model  {
      * функция возвращает название таблицы в которой хранятся сущности данного класса
      * @return string
      */
-    public static function getTable() {
+    public static function getTable() 
+    {
         return 'Users';
     }
 
@@ -21,7 +23,8 @@ class UsersAuto extends \IslandFuture\Sfw\Data\Model  {
      * функция возвращает название первичного ключа
      * @return string
      */
-    public static function getIdName() {
+    public static function getIdName() 
+    {
         return 'id';
     }
 
@@ -29,7 +32,8 @@ class UsersAuto extends \IslandFuture\Sfw\Data\Model  {
      * функция возвращает способ генерации значения первичного ключа
      * @return string
      */
-    public static function getIdDefault() {
+    public static function getIdDefault() 
+    {
         return 'UUID'; //'AUTOINC';
     }
 
@@ -37,12 +41,14 @@ class UsersAuto extends \IslandFuture\Sfw\Data\Model  {
      * функция возвращает название модели
      * @return string
      */
-    public static function getTitle() {
+    public static function getTitle() 
+    {
         return 'Пользователи';
     }
     
 
-    public static function getClearFields() {
+    public static function getClearFields() 
+    {
         return array
         (
             'id'=> null,
@@ -65,7 +71,8 @@ class UsersAuto extends \IslandFuture\Sfw\Data\Model  {
         );
     }
 
-    public static function getDefault() {
+    public static function getDefault() 
+    {
         return array(
             'iSexId'=> '0',
             'sCheckword'=> '',

@@ -3,13 +3,12 @@ namespace IslandFuture\Sfw\Meta;
 
 /**
  * Класс предназначен для генерации различного рода блоков по мета-модели или обычной модели
- *
  */
 class TableGenerator extends Generator
 {
     // declare in parents: protected $arParams = array();
     
-    public function generate ()
+    public function generate()
     {
         
         if (! file_exists($this->sPathMetaGen.$this->sClassname)) {
@@ -30,7 +29,7 @@ class TableGenerator extends Generator
         $this->saveSql();
     }
     
-    public function saveSql ()
+    public function saveSql()
     {
         $arVars = array();
         $arVars['classname'] = $this->sClassname;
@@ -74,27 +73,27 @@ class TableGenerator extends Generator
                 if ($arField['sDefault'] == 'AUTOINC' || $arField['sDefault'] == 'auto_increment') {
                     $arVars['sql_fields'] .= ' auto_increment ';
                 } else {
-                    if( in_array(strtolower($arField['sDefault']), array('now()','uuid()','current_timestamp')) ) {
+                    if(in_array(strtolower($arField['sDefault']), array('now()','uuid()','current_timestamp')) ) {
                         $arVars['sql_fields'] .= "DEFAULT ".$arField['sDefault']." ";
                     } else {
-                        if( $arField['sDefault'] == 'UUID' ) {
+                        if($arField['sDefault'] == 'UUID' ) {
                             $arField['sDefault'] = '';
                         }
                         
-                        if( $arField['sDefault'] != 'NULL' ){
+                        if($arField['sDefault'] != 'NULL' ) {
                             $arVars['sql_fields'] .= "DEFAULT '".$arField['sDefault']."' ";
                         }
                     }
                 }
             }
 
-            if( isset($arField['sComment']) ) {
+            if(isset($arField['sComment']) ) {
                 $arVars['sql_fields'] .= "COMMENT '".$arField['sComment']."'";
-            } else if( isset($arField['sTitle']) ){
+            } else if(isset($arField['sTitle']) ) {
                 $arVars['sql_fields'] .= "COMMENT '".$arField['sTitle']."'";
             }
 
-            if( isset($arField['sPrimary']) && $arField['sPrimary'] == 'yes') {
+            if(isset($arField['sPrimary']) && $arField['sPrimary'] == 'yes') {
                 $arVars['primary_key'] = $sField;
             }
 
@@ -108,16 +107,16 @@ class TableGenerator extends Generator
 
         
         /* open */
-        \IslandFuture\Sfw\Template::one()->parse($this->sPathMetaTemplates.'sql'.DIRECTORY_SEPARATOR.'create.sql',$arVars);
+        \IslandFuture\Sfw\Template::one()->parse($this->sPathMetaTemplates.'sql'.DIRECTORY_SEPARATOR.'create.sql', $arVars);
         echo 'Save SQL to file: '.$this->sPathMetaGen.$this->sClassname.DIRECTORY_SEPARATOR.'sql'.DIRECTORY_SEPARATOR.'create.sql'."\n";
         \IslandFuture\Sfw\Template::one()->saveTo($this->sPathMetaGen.$this->sClassname.DIRECTORY_SEPARATOR.'sql'.DIRECTORY_SEPARATOR.'create.sql');
 
-        \IslandFuture\Sfw\Template::one()->parse($this->sPathMetaTemplates.'sql'.DIRECTORY_SEPARATOR.'drop.sql',$arVars);
+        \IslandFuture\Sfw\Template::one()->parse($this->sPathMetaTemplates.'sql'.DIRECTORY_SEPARATOR.'drop.sql', $arVars);
         echo 'Save SQL to file: '.$this->sPathMetaGen.$this->sClassname.DIRECTORY_SEPARATOR.'sql'.DIRECTORY_SEPARATOR.'drop.sql'."\n";
         \IslandFuture\Sfw\Template::one()->saveTo($this->sPathMetaGen.$this->sClassname.DIRECTORY_SEPARATOR.'sql'.DIRECTORY_SEPARATOR.'drop.sql');
         
         
-        if (is_array($this->arRelations) && sizeof($this->arRelations ) > 0) {
+        if (is_array($this->arRelations) && sizeof($this->arRelations) > 0) {
             echo "Generate SQL constraint\n";
             $sSQL = '';
             $sSQL2 = '';
@@ -141,10 +140,10 @@ class TableGenerator extends Generator
             
                     $sConstraint = 'fk_'.$sLocalTable.'_'.$sLocalId.'_'.$sRefTable;
 
-/****************************************************************************/
-/***  шаблон для записи в файл отношения связи с другими таблицами        ***/
-/****************************************************************************/
-$sSQL .= <<<EOT
+                    /****************************************************************************/
+                    /***  шаблон для записи в файл отношения связи с другими таблицами        ***/
+                    /****************************************************************************/
+                    $sSQL .= <<<EOT
 
 ALTER TABLE `{$sLocalTable}` ADD CONSTRAINT `{$sConstraint}` FOREIGN KEY (`{$sLocalId}`)
     REFERENCES `{$sRefTable}` (`{$sRefId}`)
@@ -153,25 +152,25 @@ ALTER TABLE `{$sLocalTable}` ADD CONSTRAINT `{$sConstraint}` FOREIGN KEY (`{$sLo
     
 EOT;
 
-$sSQL2 .= <<<EOT
+                    $sSQL2 .= <<<EOT
 
 ALTER TABLE `{$sLocalTable}` DROP FOREIGN KEY `{$sConstraint}`;
 
 EOT;
 
-/****************************************************************************/
+                    /****************************************************************************/
                 }
             }
             //end foreach
 
             if ($sSQL > '') {
                 echo 'Save SQL to file: '.$this->sPathMetaGen.$this->sClassname.DIRECTORY_SEPARATOR.'sql'.DIRECTORY_SEPARATOR.'foreign.sql'."\n";
-                $rFile = fopen($this->sPathMetaGen.$this->sClassname.DIRECTORY_SEPARATOR.'sql'.DIRECTORY_SEPARATOR.'foreign.sql','w');
+                $rFile = fopen($this->sPathMetaGen.$this->sClassname.DIRECTORY_SEPARATOR.'sql'.DIRECTORY_SEPARATOR.'foreign.sql', 'w');
                 fwrite($rFile, $sSQL);
                 fclose($rFile);
 
                 echo 'Save SQL to file: '.$this->sPathMetaGen.$this->sClassname.DIRECTORY_SEPARATOR.'sql'.DIRECTORY_SEPARATOR.'foreign_drop.sql'."\n";
-                $rFile = fopen($this->sPathMetaGen.$this->sClassname.DIRECTORY_SEPARATOR.'sql'.DIRECTORY_SEPARATOR.'foreign_drop.sql','w');
+                $rFile = fopen($this->sPathMetaGen.$this->sClassname.DIRECTORY_SEPARATOR.'sql'.DIRECTORY_SEPARATOR.'foreign_drop.sql', 'w');
                 fwrite($rFile, $sSQL2);
                 fclose($rFile);
             }

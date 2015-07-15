@@ -3,7 +3,6 @@ namespace IslandFuture\Sfw\Meta;
 
 /**
  * Класс предназначен для генерации различного рода блоков по мета-модели или обычной модели
- *
  */
 abstract class Task
 {
@@ -18,7 +17,7 @@ abstract class Task
 
     public function __get($sParamName)
     {
-        if( empty($this->arParams[$sParamName]) )
+        if(empty($this->arParams[$sParamName]) )
             $this->arParams[$sParamName] = '';
         
         return $this->arParams[$sParamName];

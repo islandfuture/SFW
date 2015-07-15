@@ -2,9 +2,10 @@
 /**
  * Комманда предназначена для генерации набора скриптов для быстрого запуска проекта
  *
- * @author     Michael Akimov <michael@island-future.ru>
- * @version    GIT: $Id$
- * 
+ * @link    https://github.com/islandfuture/SFW
+ * @author  Michael Akimov <michael@island-future.ru>
+ * @version GIT: $Id$
+ *
  * @example:
  *      на основе мета модели создаем набор классов для использования в проекте, блоков и страниц
  *      console.php crud model=Posts

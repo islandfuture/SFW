@@ -1,6 +1,17 @@
 <?php
 namespace IslandFuture\Sfw;
 
+/**
+ * Класс отвечающий за ссесию текущего юзера и за связь с данными юзера в БД
+ *
+ * @link    https://github.com/islandfuture/SFW
+ * @author  Michael Akimov <michael@island-future.ru>
+ * @version GIT: $Id$
+ *
+ * @example в рамках выполнения скрипта сессия всегда одна.
+ *      \IslandFuture\Sfw\ActiveUser::one()->iRoleId = 1
+ **/
+
 class ActiveUser extends Only
 {
     // @var string в свойстве хранится название класса, которое отвечает за хранение данных юзера в БД
@@ -36,7 +47,7 @@ class ActiveUser extends Only
     protected function afterConstruct($arParams)
     {
         if ($arParams && ! empty($arParams['sModel'])) {
-            self::$sUserClassName = $arParams['sModel'];
+            static::$sUserClassName = $arParams['sModel'];
         }
 
         $this->hasError = (! session_start());
@@ -45,8 +56,8 @@ class ActiveUser extends Only
             $_SESSION['SFW_USER'] = array();
         }
         
-        if (self::$sUserClassName != 'none') {
-            $this->oCurrentUser = \IslandFuture\Sfw\Data\Storages::model(self::$sUserClassName);
+        if (static::$sUserClassName != 'none') {
+            $this->oCurrentUser = \IslandFuture\Sfw\Data\Storages::model(static::$sUserClassName);
             $this->oCurrentUser->attributes($_SESSION['SFW_USER']);
         } else {
             $this->oCurrentUser = new \stdClass();
@@ -63,7 +74,7 @@ class ActiveUser extends Only
         if (! $this->isSynchronized && $isNeedSynchro && ($this->__get($sKey) > '')) {
             $this->oCurrentUser = \IslandFuture\Sfw\Data\Storages::getOne(
                 array(
-                    'sModel' => self::$sUserClassName,
+                    'sModel' => static::$sUserClassName,
                     'arFilter' => array(
                         $sKey => array('=' => $this->__get($sKey) )
                     )
@@ -82,7 +93,7 @@ class ActiveUser extends Only
 
     public function getName()
     {
-        if (self::$sUserClassName != 'none') {
+        if (static::$sUserClassName != 'none') {
             return $this->oCurrentUser->getName();
         } else {
             return 'none';
@@ -95,7 +106,7 @@ class ActiveUser extends Only
             $this->__set($key, $val);
         }
         
-        if (self::$sUserClassName != 'none') {
+        if (static::$sUserClassName != 'none') {
             $this->oCurrentUser->attributes($_SESSION['SFW_USER']);
         } else {
             $this->oCurrentUser = $_SESSION['SFW_USER'];
@@ -105,8 +116,8 @@ class ActiveUser extends Only
     public function logout()
     {
         $this->id = null;
-        if (self::$sUserClassName != 'none') {
-            $this->oCurrentUser = \IslandFuture\Sfw\Data\Storages::model(self::$sUserClassName);
+        if (static::$sUserClassName != 'none') {
+            $this->oCurrentUser = \IslandFuture\Sfw\Data\Storages::model(static::$sUserClassName);
         } else {
             $this->oCurrentUser = new \stdClass();
         }

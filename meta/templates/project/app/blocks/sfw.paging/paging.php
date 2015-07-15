@@ -4,34 +4,34 @@
  *
  */
 
-if( empty($paging_size) ) {
+if(empty($paging_size) ) {
     $paging_size = 20;
 }
 
-if( empty($paging_current) ) {
+if(empty($paging_current) ) {
     $paging_current = 1; // текущая страница
 }
 
-if( empty($paging_total_rec) ) {
+if(empty($paging_total_rec) ) {
     $paging_total_rec = $paging_size; // общее количество записей
 }
 
-if( empty($paging_url) ) {
+if(empty($paging_url) ) {
     $paging_url = $_SERVER['REQUEST_URI'];
 }
 
-if( strpos($paging_url, '?') === false ) {
+if(strpos($paging_url, '?') === false ) {
     $glue = '?';
 } else {
     $glue = '&';
 }
 
-$newurl = preg_replace('/&p=\d{0,5}/','', $paging_url);
-if( $newurl == NULL ){
-    $newurl = preg_replace('/?p=\d{0,5}/','', $paging_url);
+$newurl = preg_replace('/&p=\d{0,5}/', '', $paging_url);
+if($newurl == null ) {
+    $newurl = preg_replace('/?p=\d{0,5}/', '', $paging_url);
 }
 
-if( $newurl !== NULL ){
+if($newurl !== null ) {
     $paging_url = $newurl;
 }
 
@@ -40,7 +40,7 @@ $paging_total_page = ceil($paging_total_rec / $paging_size);
 
 echo '<ul class="paging">';
 for($page = 0; $page < $paging_total_page; $page++ ) {
-    if( $page == $paging_current-1 ) {
+    if($page == $paging_current-1 ) {
         echo '<li class="current"><a href="'.$paging_url.$glue.'p='.($page+1).'">'.($page+1).'</a></li>';
     } else {
         echo '<li><a href="'.$paging_url.$glue.'p='.($page+1).'">'.($page+1).'</a></li>';

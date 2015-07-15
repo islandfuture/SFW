@@ -1,5 +1,5 @@
 ﻿<?php
-return array(
+   return array(
     'web' => array(
         'site' => 'example.com',
         'name' => 'Site Name'
@@ -24,4 +24,4 @@ return array(
     'route' => 'route.php',
 
     'debug' => 'Y'
-);
+   );

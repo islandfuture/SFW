@@ -1,10 +1,12 @@
 <?php
-include_once "UsersAuto.php";
+require_once "UsersAuto.php";
 /**
  * здесь Вы можете добавлять свои функции и обработчики для модели Microblogs
  */
 class Users extends UsersAuto
-{    
+{
+
+    
     public function genRandomPassword($length = 8)
     {
         $salt = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -17,7 +19,8 @@ class Users extends UsersAuto
         return $makepass;
     }
     
-    public function canEdit() {
+    public function canEdit() 
+    {
         return ( $this->id == \IslandFuture\Sfw\ActiveUser::one()->id );
     }
     
@@ -31,15 +34,15 @@ class Users extends UsersAuto
         
         return $date->getTimestamp();
     }//end function
-	
-	public function getName()
-	{
-		if($this->sName > '') {
-			return $this->sName;
-		} else {
-			$arTmp = explode('@', $this->sEmail);
-			return $arTmp[0];
-		}
-	}
+    
+    public function getName()
+    {
+        if($this->sName > '') {
+            return $this->sName;
+        } else {
+            $arTmp = explode('@', $this->sEmail);
+            return $arTmp[0];
+        }
+    }
 
 }

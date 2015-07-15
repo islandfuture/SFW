@@ -1,9 +1,9 @@
 <?php
 namespace IslandFuture\Sfw\Data;
+
 /**
  * Класс для работы с объектами в базе. Нужен для описания типов объектов и облегечения
  * работы с рутинными операциями:
- *
  */
 class Model
 {
@@ -12,21 +12,21 @@ class Model
     protected $arFields     = array();
 
     public function __destruct()
-	{
+    {
         $this->arFields = null;
         return true;
     }
 
-    public function __construct($arFields = array() )
-	{
+    public function __construct($arFields = array())
+    {
 
-        if ( sizeof($this->arFields ) == 0 ) {
+        if (sizeof($this->arFields) == 0) {
             $this->arFields = static::getClearFields();
         }
 
-        if ( is_array($arFields ) && sizeof($arFields ) > 0 ) {
-            foreach ($arFields as $key => $value ) {
-                if (key_exists($key, $this->arFields ) ) {
+        if (is_array($arFields) && sizeof($arFields) > 0) {
+            foreach ($arFields as $key => $value) {
+                if (key_exists($key, $this->arFields)) {
                     $this->arFields[$key] = $value;
                 }
             }//end foreach*/
@@ -40,8 +40,8 @@ class Model
     public function __getFormatString()
     {
         $str = "array(\n";
-        foreach ($this->arFields as $key => $value ) {
-            $str .= "\t'$key' => " . \IslandFuture\Sfw\Data\Storages::one()->quote($value ) . ",\n";
+        foreach ($this->arFields as $key => $value) {
+            $str .= "\t'$key' => " . \IslandFuture\Sfw\Data\Storages::one()->quote($value) . ",\n";
         }//end foreach
         $str .= ")\n";
 
@@ -59,7 +59,7 @@ class Model
 
     static public function getTable()
     {
-        throw new \Exception( 'not found table name in model ' . get_class($this ));
+        throw new \Exception('not found table name in model ' . get_class($this));
     }
 
     /**
@@ -107,14 +107,14 @@ class Model
         return 'AUTOINC'; // UUID, VALUE
     }
 
-    public function is($name )
+    public function is($name)
     {
         $result = false;
-        if (key_exists($name, $this->arFields )) {
+        if (key_exists($name, $this->arFields)) {
             $result = true;
         } else {
             $relations = static::getRelations();
-            if ( isset($relations[$name] ) ) {
+            if (isset($relations[$name])) {
                 $result = true;
             }
         }
@@ -127,20 +127,22 @@ class Model
      * @param string $name название поля или связи
      * @return mixed
      */
-    public function __get($name )
+    public function __get($name)
     {
-		$idxLinkType = 0;
-		$idxLocalField = 1;
-		$idxLinkModel = 2;
-		$idxLinkField = 3;
-		
-        if (! $name){ return null; }
+        $idxLinkType = 0;
+        $idxLocalField = 1;
+        $idxLinkModel = 2;
+        $idxLinkField = 3;
+        
+        if (! $name) {
+			return null; 
+        }
 
-        if (key_exists($name, $this->arFields )) {
+        if (key_exists($name, $this->arFields)) {
             return $this->arFields[$name];
         }
 
-        throw new \Exception( 'Unknown fields [' . $name . '] in class [' . get_class($this ) . ']');
+        throw new \Exception('Unknown fields [' . $name . '] in class [' . get_class($this) . ']');
     }
 
     public function __set($name, $val)
@@ -152,50 +154,46 @@ class Model
         if (key_exists($name, $this->arFields)) {
             $this->arFields[$name] = $val;
         } else {
-            throw new \Exception( 'Нельзя присвоить значение неизвестному полю [' . $name . '] в классе [' . get_class($this ) . ']');
+            throw new \Exception('Нельзя присвоить значение неизвестному полю [' . $name . '] в классе [' . get_class($this) . ']');
         }
     }
 
     public function getOptionsList($sRelname, $selected = '', $where = null, $sViewField = 'name', $glue = ' / ')
-	{
+    {
         $arRelations = $this->$sRelname(false); // $this->getRelations();
         $arResult = array();
 
         if ($arRelations) {
 
-			foreach ($arRelations as $idx => $mRelation) {
-				if (is_array($mRelation)) {
-					$arResult[] = '<option value="' . $idx . '" ' . ($idx == $selected ? 'selected="selected"' : '') . '>' . $mRelation[0] . '</option>';
-				} else {
-					$sKey = $mRelation::getIdName();
-					$arResult[] = '<option value="' . $mRelation->{$sKey} . '" ' . ($mRelation->{$sKey} == $selected ? 'selected="selected"' : '') . '>' . $mRelation->{$sViewField} . '</option>';
-				}
-			}/* end foreach */
-			
+            foreach ($arRelations as $idx => $mRelation) {
+                if (is_array($mRelation)) {
+                    $arResult[] = '<option value="' . $idx . '" ' . ($idx == $selected ? 'selected="selected"' : '') . '>' . $mRelation[0] . '</option>';
+                } else {
+                    $sKey = $mRelation::getIdName();
+                    $arResult[] = '<option value="' . $mRelation->{$sKey} . '" ' . ($mRelation->{$sKey} == $selected ? 'selected="selected"' : '') . '>' . $mRelation->{$sViewField} . '</option>';
+                }
+            }/* end foreach */
+            
         }
 
-        return implode( "\n", $arResult);
+        return implode("\n", $arResult);
     }
 
-//end function
+    //end function
 
-    public function attributes ($params, $isClearEmpty = true, $isSetNull = false )
+    public function attributes($params, $isClearEmpty = true, $isSetNull = false )
     {
         $fields = $this->getClearFields();
 
         foreach ($fields as $key => $val) {
-            if (
-				isset($params[$key])
-				&& (
-					$params[$key] != ''
-					|| $isClearEmpty
-				)
-			) {
-                if (
-					$isSetNull
-					&& $params[$key] == ''
-				) {
-                    $this->arFields[$key] = NULL;
+            if (isset($params[$key])
+                && (            $params[$key] != ''
+                || $isClearEmpty            )
+            ) {
+                if ($isSetNull
+                    && $params[$key] == ''
+                ) {
+                    $this->arFields[$key] = null;
                 } else {
                     $this->arFields[$key] = $params[$key];
                 }
@@ -204,7 +202,8 @@ class Model
         return $this;
     }
 
-    public function delete ($arParams = array()) {
+    public function delete($arParams = array()) 
+    {
         $bTransaction = false;
 
         /*
@@ -213,7 +212,7 @@ class Model
         if (! isset($arParams['before'])) {
             $arParams['before'] = false;
         }
-		
+        
         if (! isset($arParams['after'])) {
             $arParams['after'] = false;
         }
@@ -223,7 +222,7 @@ class Model
          */
         if (! empty($arParams['database'])) {
             $sTable = '`' . $arParams['database'] . '`.`' . static::getTable() . '`';
-        } elseif (static::getDatabase() > '' ) {
+        } elseif (static::getDatabase() > '') {
             $sTable = '`' . static::getDatabase() . '`.`' . static::getTable() . '`';
         } else {
             $sTable = '`'.static::getTable().'`';
@@ -232,17 +231,14 @@ class Model
         /*
          * Проверяем необходимость использования транзакции
          */
-        if
-        (
-            isset($arParams['transaction'] ) && $arParams['transaction'] == true
-        ) {
+        if (isset($arParams['transaction'] ) && $arParams['transaction'] == true) {
             $bTransaction = true;
             Storages::one()->begin();
         }
 
 
         if (! $this->beforeDelete($arParams['before'])) {
-            if ($bTransaction ) {
+            if ($bTransaction) {
                 Storages::one()->rollback();
             }
             return false;
@@ -257,35 +253,34 @@ class Model
 
         if (! $result) {
                 $err = Storages::one()->errorInfo();
-                if ($err[0] != '00000' )
-                {
-                    echo "<div class='error'>" . $sql;
-                    echo ($err);
-                    echo '</div>';
-                }//end if
+            if ($err[0] != '00000') {
+                echo "<div class='error'>" . $sql;
+                echo ($err);
+                echo '</div>';
+            }//end if
         }
 
 
         if ($result > 0) {
-            if ($this->afterDelete($arParams['after'] ) === false) {
+            if ($this->afterDelete($arParams['after']) === false) {
                 if ($bTransaction) {
                     Storages::one()->rollback();
                 }
                 $result = false;
             } else {
-                if ($bTransaction ) {
+                if ($bTransaction) {
                     Storages::one()->commit();
                 }
             }
-        } elseif ($result === false && $bTransaction ) {
+        } elseif ($result === false && $bTransaction) {
             Storages::one()->rollback();
         }
 
         return $result;
     } //end function
 
-    protected function beforeDelete ($mParams=array())
-	{
+    protected function beforeDelete($mParams=array())
+    {
         return true;
     }
 
@@ -321,20 +316,17 @@ class Model
         $bTransaction     = false;
         $sClassName = get_called_class();
         
-        if ($idname && !$this->__get($idname ) )
-        {
+        if ($idname && !$this->__get($idname)) {
             $this->isNewRecord = true;
         }
 
         /*
          * Выставляем базу и таблицу для запроса
          */
-        if ( !empty($arParams['sDatabase']) )
-        {
+        if (!empty($arParams['sDatabase'])) {
             $sTable = '`'.$arParams['sDatabase'].'`.`'.static::getTable().'`';
         }
-        elseif ( static::getDatabase() > '' )
-        {
+        elseif (static::getDatabase() > '') {
             $sTable = '`'.static::getDatabase().'`.`'.static::getTable().'`';
         }
         else
@@ -346,30 +338,24 @@ class Model
         /*
          * Проверяем параметры для передачи в методы before_save и after_save
          */
-        if ( !isset($arParams['before'] ) )
-        {
+        if (!isset($arParams['before'] )) {
             $arParams['before'] = false;
         }
-        if ( !isset($arParams['after'] ) )
-        {
+        if (!isset($arParams['after'] )) {
             $arParams['after'] = false;
         }
 
         /*
          * Проверяем необходимость использования транзакции
          */
-        if
-        (
-            isset($arParams['transaction'] ) && $arParams['transaction'] == true
-        )
-        {
+        if (isset($arParams['transaction'] ) && $arParams['transaction'] == true) {
             $bTransaction = true;
             Storages::one()->begin();
         }
 
 
-        if (! $this->beforeSave($arParams['before'] )) {
-            if ($bTransaction ) {
+        if (! $this->beforeSave($arParams['before'])) {
+            if ($bTransaction) {
                 Storages::one()->rollback();
             }
             return false;
@@ -380,7 +366,7 @@ class Model
 
             if ($value === null && $key != $idname) {
                 if (isset($def[$key] )) {
-                    if (in_array($def[$key], array( 'CURRENT_TIMESTAMP', 'now()', 'NOW()', 'NULL' ) )) {
+                    if (in_array($def[$key], array( 'CURRENT_TIMESTAMP', 'now()', 'NOW()', 'NULL' ))) {
                         $values[$key]         = $def[$key];
                         $values_upd[$key]     = "`" . $key . "`=" . $def[$key];
                     } else {
@@ -401,63 +387,64 @@ class Model
             }
         }//end foreach
         
-        if ($this->isNewRecord ) {
+        if ($this->isNewRecord) {
 
             if (empty($values[$idname] ) || $values[$idname] == "''") {
                 switch ($this->getIdDefault()) {
-                    case 'UUID':
-                        do
-                        {
-                            $uid = mt_rand($this->uidMin, $this->uidMax);
-                            $isExists = Storages::getCountAll( array(
-                                    'sDatabase' => $this->getDatabase(),
-                                    'sModel' => get_called_class(),
-                                    'arFilter' => array(
-                                        $idname => array('=' => $uid )
-                                    )
+                case 'UUID':
+                    do
+                    {
+                        $uid = mt_rand($this->uidMin, $this->uidMax);
+                        $isExists = Storages::getCountAll(
+                            array(
+                                'sDatabase' => $this->getDatabase(),
+                                'sModel' => get_called_class(),
+                                'arFilter' => array(
+                                    $idname => array('=' => $uid)
                                 )
-                           );
-                        }
-                        while($isExists);
+                            )
+                        );
+                    }
+                    while($isExists);
 
-                        $values[$idname]         = "'" . $uid . "'";
-                        $this->$idname = $uid; 
-                        break;
-                    case 'GUID':
+                    $values[$idname] = "'" . $uid . "'";
+                    $this->$idname = $uid; 
+                    break;
+                case 'GUID':
 
-                        do {
-                            $uid = str_replace('.', '', uniqid('', true));
-                            $isExists = Storages::getCountAll(
-								array(
-                                    'sDatabase' => $this->getDatabase(),
-                                    'sModel' => get_called_class(),
-                                    'arFilter' => array(
-                                        $idname => array('=' => $uid )
-                                    )
+                    do {
+                        $uid = str_replace('.', '', uniqid('', true));
+                        $isExists = Storages::getCountAll(
+                            array(
+                                'sDatabase' => $this->getDatabase(),
+                                'sModel' => get_called_class(),
+                                'arFilter' => array(
+                                    $idname => array('=' => $uid)
                                 )
-                           );
-                        } while($isExists);
+                            )
+                        );
+                    } while($isExists);
 
-                        $values[$idname]         = "'" . $uid . "'";
-                        $this->$idname = $uid; 
-                        break;
-                    case 'AUTOINC':
-                        $values[$idname]         = 'NULL';
-                        break;
-                    default:
-                        break;
+                    $values[$idname] = "'" . $uid . "'";
+                    $this->$idname = $uid; 
+                    break;
+                case 'AUTOINC':
+                    $values[$idname] = 'NULL';
+                    break;
+                default:
+                    break;
                 }//end switch
 
                 if ($idname > '') {
                     $names[$idname] = $idname;
                 }
             }
-            $sql = "INSERT INTO " . $sTable . ' (`' . implode( '`,`', $names ) . "`) VALUES(" . implode( ',', $values ) . ")";
+            $sql = "INSERT INTO " . $sTable . ' (`' . implode('`,`', $names) . "`) VALUES(" . implode(',', $values) . ")";
         }
         else
         {
             $sql = "UPDATE " . $sTable . " SET " .
-                implode( ',', $values_upd ) .
+                implode(',', $values_upd) .
                 " WHERE $idname = '" . $this->$idname . "'";
         }//end if else
 
@@ -475,7 +462,7 @@ class Model
                 }
             }
 
-            if (static::getIdDefault() == 'AUTOINC' && $this->isNewRecord ) {
+            if (static::getIdDefault() == 'AUTOINC' && $this->isNewRecord) {
                 $this->__set($idname, Storages::one()->getLastID());
             }
 
@@ -490,7 +477,7 @@ class Model
 
         if ($result) {
             if (false === $this->afterSave($arParams['after'])) {
-                if ($bTransaction ) {
+                if ($bTransaction) {
                     Storages::one()->rollback();
                 }
                 return false;
@@ -520,7 +507,7 @@ class Model
 
     /*     * ************ Utility ******************* */
 
-    public function formatDate($name, $format = 'd.m.Y' )
+    public function formatDate($name, $format = 'd.m.Y')
     {
         $str = $this->__get($name);
         $str = strtotime($str);
@@ -535,10 +522,10 @@ class Model
     /**
      * @return string возвращает строку где переврод строки заменен на <br />
      */
-    public function getTextToHtml($name )
+    public function getTextToHtml($name)
     {
         if (isset($this->arFields[$name])) {
-            return str_replace( "\n", '<br />', $this->arFields[$name]);
+            return str_replace("\n", '<br />', $this->arFields[$name]);
         }
         return '';
     }

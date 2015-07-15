@@ -1,9 +1,11 @@
 <?php
 /**
- * $Id: $
- * $Log: $
+ * @link https://github.com/islandfuture/SFW
+ * @author  Michael Akimov <michael@island-future.ru>
+ * @version GIT: $Id$
  *
  * Комманда предназначена для генерации различных скриптов на основе метамодели
+ *
  * @example:
  *      на основе мета модели создаем набор классов для использования в проекте
  *      console.php meta task=generate::model model=blog
@@ -59,7 +61,7 @@ if ($isExist) {
     // если класса не существует, то открываем файл с классом
     if (! $is_exists) {
         if (file_exists($sPathSfw."classes".DIRECTORY_SEPARATOR.'Meta'.DIRECTORY_SEPARATOR.$sUCommand."Generator.php")) {
-            include_once ($sPathSfw."classes".DIRECTORY_SEPARATOR.'Meta'.DIRECTORY_SEPARATOR.$sUCommand."Generator.php");
+            include_once $sPathSfw."classes".DIRECTORY_SEPARATOR.'Meta'.DIRECTORY_SEPARATOR.$sUCommand."Generator.php";
             $sUCommand = "\\IslandFuture\\Sfw\\Meta\\".$sUCommand.'Generator';
         } else {
             include_once $sPathApp.'meta'.DIRECTORY_SEPARATOR."tasks".DIRECTORY_SEPARATOR.$sUCommand."Generator.php";

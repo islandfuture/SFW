@@ -3,7 +3,6 @@ namespace IslandFuture\Sfw\Meta;
 
 /**
  * Класс предназначен для генерации различного рода блоков по мета-модели или обычной модели
- *
  */
 class Db2metaGenerator extends Generator
 {
@@ -32,15 +31,15 @@ class Db2metaGenerator extends Generator
         $sRelations = '';
         
         foreach ($arFields as $arField) {
-            $iPos = strpos($arField['Type'],'(',1);
+            $iPos = strpos($arField['Type'], '(', 1);
             if (false === $iPos) {
                 $sType = $arField['Type'];
                 $iLength = 0;
             } else {
-                $iLength = (int)substr( $arField['Type'], $iPos+1, strpos($arField['Type'],')',$iPos)-$iPos-1 );
-                $sType = substr( $arField['Type'], 0, $iPos );
+                $iLength = (int)substr($arField['Type'], $iPos+1, strpos($arField['Type'], ')', $iPos)-$iPos-1);
+                $sType = substr($arField['Type'], 0, $iPos);
                 
-                if( in_array($sType, array('int', 'bigint')) ){
+                if(in_array($sType, array('int', 'bigint')) ) {
                     $iLength = 0;
                 }
             }
@@ -48,24 +47,20 @@ class Db2metaGenerator extends Generator
             $isPrimary = ($arField['Key'] == 'PRI' ? 'yes' : 'no');
             $isNull = ($arField['Key'] == 'Null' ? 'yes' : 'no');
             
-            if (
-                $sType == 'char'
+            if ($sType == 'char'
                 || $sType == 'varchar'
                 || $sType == 'text'
             ) {
-                if (
-                    $sType == 'char'
+                if ($sType == 'char'
                     && $iLength >= 36
-                    && (
-                        $arField['Key'] == 'PRI'
-                        || $arField['Default'] == 'UUID()'
-                        || $arField['Key'] == 'MUL'
-                    )
+                    && (                    $arField['Key'] == 'PRI'
+                    || $arField['Default'] == 'UUID()'
+                    || $arField['Key'] == 'MUL')
                 ) {
                     $sCodepage = 'ascii';
                     $sBinary = 'yes';
                 } else {
-                    if ( isset($arField['Collation']) && $arField['Collation'] == 'ascii_bin') {
+                    if (isset($arField['Collation']) && $arField['Collation'] == 'ascii_bin') {
                         $sCodepage = 'ascii';
                         $sBinary = 'bin';
                     } else {
@@ -124,7 +119,7 @@ class Db2metaGenerator extends Generator
                 if (false === $iPos) {
                     $sRelname = $arRelation['COLUMN_NAME'];
                 } else {
-                    $sRelname = substr($arRelation['COLUMN_NAME'],0,$iPos);
+                    $sRelname = substr($arRelation['COLUMN_NAME'], 0, $iPos);
                 }
                 $sRelations .= "        '".$sRelname."' => array('ONE','".$arRelation['COLUMN_NAME']."','".$arRelation['REFERENCED_TABLE_NAME']."','".$arRelation['REFERENCED_COLUMN_NAME']."'),\n";
             }//end foreach
@@ -160,7 +155,7 @@ $sFileds
 EOT;
     }
     
-    public function generate ()
+    public function generate()
     {
         
         if (! file_exists($this->sPathMetaGen.'meta')) {
@@ -169,8 +164,8 @@ EOT;
         }
 
         echo "Save to file: ".$this->sPathMetaGen.'meta'.DIRECTORY_SEPARATOR.$this->sClassname.'.php';
-        $rFile = fopen($this->sPathMetaGen.'meta'.DIRECTORY_SEPARATOR.$this->sClassname.'.php','w');
-        fwrite($rFile,$this->sFileds);
+        $rFile = fopen($this->sPathMetaGen.'meta'.DIRECTORY_SEPARATOR.$this->sClassname.'.php', 'w');
+        fwrite($rFile, $this->sFileds);
         fclose($rFile);
     }
 }

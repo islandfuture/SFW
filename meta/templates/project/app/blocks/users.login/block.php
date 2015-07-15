@@ -25,8 +25,7 @@ try {
     );
 
     if (! $oUser ) {
-        if (
-            $this->isAdminSection
+        if ($this->isAdminSection
             && \IslandFuture\Sfw\Data\Storages::getCountAll(array('sModel' => 'Users')) == 0
         ) {
             $oUser = new Users();
@@ -65,7 +64,7 @@ try {
     
     $this->item = $oUsers;
 
-    if( !empty($_REQUEST['remeber']) ){
+    if(!empty($_REQUEST['remeber']) ) {
         /* установим на 2 недели */
         setcookie("session_lifetime", $oUser->id.'_'.$oUser->sPasswd, time()+1209600);
     }

@@ -4,6 +4,11 @@ namespace IslandFuture\Sfw;
  * Класс предназначен для работы с шаблонами. Фактически происходит
  * открытие файла и замена в нем слов определенного формата на переданные
  * значения и отображение получившегося
+ *
+ * @link    https://github.com/islandfuture/SFW
+ * @author  Michael Akimov <michael@island-future.ru>
+ * @version GIT: $Id$
+ * 
  * @example
  *     $result = \IslandFuture\Sfw\Template::one()->parse('file.tpl', array('param1'=>'value1',...));
  *     замена спец слов на переданные параметры
@@ -22,18 +27,19 @@ class Template extends \IslandFuture\Sfw\Only
     {
     }//end class
 
-    public function makeDir($sPath) {
-        if ( substr($sPath,0,1) != DIRECTORY_SEPARATOR && substr($sPath,1,2)!=':'.DIRECTORY_SEPARATOR ) {
+    public function makeDir($sPath) 
+    {
+        if (substr($sPath, 0, 1) != DIRECTORY_SEPARATOR && substr($sPath, 1, 2)!=':'.DIRECTORY_SEPARATOR ) {
             $sPath = getcwd().DIRECTORY_SEPARATOR.$sPath;
         }
 
-        if ( substr($sPath,1,2) == ':'.DIRECTORY_SEPARATOR  ) {
-            $tmppath = substr($sPath,0,2);
-            $sPath = substr( $sPath, 2, strlen($sPath) );
+        if (substr($sPath, 1, 2) == ':'.DIRECTORY_SEPARATOR  ) {
+            $tmppath = substr($sPath, 0, 2);
+            $sPath = substr($sPath, 2, strlen($sPath));
         } else {
             $tmppath = '';
         }
-        $arStruct = explode(DIRECTORY_SEPARATOR,$sPath);
+        $arStruct = explode(DIRECTORY_SEPARATOR, $sPath);
         //поднимаемся по указанному пути, пока не доберемся до директории, которая уже существует
         for ($i = 0; $i < sizeof($arStruct);$i++) {
             if ($arStruct[$i] == "") {
@@ -57,7 +63,7 @@ class Template extends \IslandFuture\Sfw\Only
 
         for($j=$i+1; $j<sizeof($arStruct); $j++) {
             $tmppath .= DIRECTORY_SEPARATOR.$arStruct[$j];
-            if( !file_exists($tmppath) ){
+            if(!file_exists($tmppath) ) {
                 echo "create directory: $tmppath\n";
                 mkdir($tmppath);
             }
@@ -65,7 +71,7 @@ class Template extends \IslandFuture\Sfw\Only
 
     }
     
-    public function setPath ($sPath)
+    public function setPath($sPath)
     {
         $this->sPath = $sPath;
         return $this;
@@ -86,7 +92,7 @@ class Template extends \IslandFuture\Sfw\Only
     public function parse($sFile, $arParams=array())
     {
         if(! file_exists($sFile)) {
-            if( !file_exists($this->sPath.$sFile)  ) {
+            if(!file_exists($this->sPath.$sFile)  ) {
                 throw new \Exception("File ".$sFile." not found\n");
             }
             $sFullName = $this->sPath.$sFile;
@@ -107,18 +113,18 @@ class Template extends \IslandFuture\Sfw\Only
 
     public function show($sFile, $arParams=array())
     {
-        echo $this->parse( $sFile, $arParams );
+        echo $this->parse($sFile, $arParams);
     }
 
     public function saveTo($sFile)
     {
-        $sDirname = dirname( $sFile );
+        $sDirname = dirname($sFile);
         if(! file_exists($sDirname)) {
             echo "Сохраняем файл: $sFile \n";
             $this->makeDir($sDirname);
         }
         
-        $f = fopen($sFile,'w');
+        $f = fopen($sFile, 'w');
         fwrite($f, $this->_last);
         fclose($f);
     }

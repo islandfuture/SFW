@@ -4,15 +4,14 @@ namespace IslandFuture\Sfw\Meta;
 /**
  * Класс предназначен для генерации различного рода блоков по мета-модели
  *
- * @author     Michael Akimov <michael@island-future.ru>
- * @version    GIT: $Id$
- * 
+ * @author  Michael Akimov <michael@island-future.ru>
+ * @version GIT: $Id$
  */
 class BlocksGenerator extends Generator
 {
     // declared in parents: protected $arParams = array();
 
-    public function generate ()
+    public function generate()
     {
         
         if (! file_exists($this->sPathMetaGen.$this->sClassname)) {
@@ -39,7 +38,7 @@ class BlocksGenerator extends Generator
         $this->saveBlockList();
     }
     
-    public function saveBlockList ()
+    public function saveBlockList()
     {
         $arVars = array();
         $arVars['classname'] = $this->sClassname;
@@ -92,13 +91,13 @@ class BlocksGenerator extends Generator
         $arFiles = $this->getListFilesEx($this->sPathMetaTemplates.'blocks'.DIRECTORY_SEPARATOR.'_class_.list'.DIRECTORY_SEPARATOR, 0, $this->sPathMetaGen.$this->sClassname.DIRECTORY_SEPARATOR.'blocks'.DIRECTORY_SEPARATOR.$arVars['classlower'].'.list'.DIRECTORY_SEPARATOR, $arVars);
 
         foreach($arFiles as $sParse => $sFile) {
-            \IslandFuture\Sfw\Template::one()->parse($sParse,$arVars);
+            \IslandFuture\Sfw\Template::one()->parse($sParse, $arVars);
             echo 'Save file: '.$sFile."\n";
             \IslandFuture\Sfw\Template::one()->saveTo($sFile);
         }
     }
     
-    public function saveBlockDel ()
+    public function saveBlockDel()
     {
         $arVars = array();
         $arVars['classname'] = $this->sClassname;
@@ -129,13 +128,13 @@ class BlocksGenerator extends Generator
         $arFiles = $this->getListFilesEx($this->sPathMetaTemplates.'blocks'.DIRECTORY_SEPARATOR.'_class_.del'.DIRECTORY_SEPARATOR, 0, $this->sPathMetaGen.$this->sClassname.DIRECTORY_SEPARATOR.'blocks'.DIRECTORY_SEPARATOR.$arVars['classlower'].'.del'.DIRECTORY_SEPARATOR, $arVars);
 
         foreach($arFiles as $sParse => $sFile) {
-            \IslandFuture\Sfw\Template::one()->parse($sParse,$arVars);
+            \IslandFuture\Sfw\Template::one()->parse($sParse, $arVars);
             echo 'Save file: '.$sFile."\n";
             \IslandFuture\Sfw\Template::one()->saveTo($sFile);
         }
     }
 
-    public function saveBlockInfo ()
+    public function saveBlockInfo()
     {
         $arVars = array();
         $arVars['classname'] = $this->sClassname;
@@ -239,7 +238,7 @@ EOT;
         $arFiles = $this->getListFilesEx($this->sPathMetaTemplates.'blocks'.DIRECTORY_SEPARATOR.'_class_.info'.DIRECTORY_SEPARATOR, 0, $this->sPathMetaGen.$this->sClassname.DIRECTORY_SEPARATOR.'blocks'.DIRECTORY_SEPARATOR.$arVars['classlower'].'.info'.DIRECTORY_SEPARATOR, $arVars);
 
         foreach($arFiles as $sParse => $sFile) {
-            \IslandFuture\Sfw\Template::one()->parse($sParse,$arVars);
+            \IslandFuture\Sfw\Template::one()->parse($sParse, $arVars);
             echo 'Save file: '.$sFile."\n";
             \IslandFuture\Sfw\Template::one()->saveTo($sFile);
         }

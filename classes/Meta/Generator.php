@@ -4,8 +4,8 @@ namespace IslandFuture\Sfw\Meta;
 /**
  * Класс предназначен для генерации различного рода блоков по мета-модели или обычной модели
  *
- * @author     Michael Akimov <michael@island-future.ru>
- * @version    GIT: $Id$
+ * @author  Michael Akimov <michael@island-future.ru>
+ * @version GIT: $Id$
  */
 class Generator extends Task
 {

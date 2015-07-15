@@ -1,4 +1,4 @@
-<?php if ($this->oModel->id > 0): ?>
+<?php if ($this->oModel->id > 0) : ?>
 <h1>Редактирование заметки</h1>
 <?php else: ?>
 <h1>Создание заметки</h1>

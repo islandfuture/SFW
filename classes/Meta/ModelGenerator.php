@@ -3,13 +3,12 @@ namespace IslandFuture\Sfw\Meta;
 
 /**
  * Класс предназначен для генерации различного рода блоков по мета-модели или обычной модели
- *
  */
 class ModelGenerator extends Generator
 {
     // declare in parents: protected $arParams = array();
     
-    public function generate ()
+    public function generate()
     {
         
         if (! file_exists($this->sPathMetaGen.$this->sClassname)) {
@@ -30,7 +29,7 @@ class ModelGenerator extends Generator
         $this->saveModel();
     }
     
-    public function saveModel ()
+    public function saveModel()
     {
         $arVars = array();
         $arVars['classname'] = $this->sClassname;
@@ -67,7 +66,7 @@ class ModelGenerator extends Generator
                 $sValues = '';
                 if (is_array($arRelation[2])) {
                     foreach($arRelation[2] as $idx => $arVals) {
-                        $sValues .= "            '$idx' => array('".implode("','",$arVals)."'),\n";
+                        $sValues .= "            '$idx' => array('".implode("','", $arVals)."'),\n";
                     }
                 }
                 
@@ -116,11 +115,11 @@ EOT;
         }
         
         /* open class auto */
-        \IslandFuture\Sfw\Template::one()->parse($this->sPathMetaTemplates.'models'.DIRECTORY_SEPARATOR.'class_auto.php',$arVars);
+        \IslandFuture\Sfw\Template::one()->parse($this->sPathMetaTemplates.'models'.DIRECTORY_SEPARATOR.'class_auto.php', $arVars);
         echo 'Save model auto to file: '.$this->sPathMetaGen.$this->sClassname.DIRECTORY_SEPARATOR.'models'.DIRECTORY_SEPARATOR.$this->sClassname.'Auto.php'."\n";
         \IslandFuture\Sfw\Template::one()->saveTo($this->sPathMetaGen.$this->sClassname.DIRECTORY_SEPARATOR.'models'.DIRECTORY_SEPARATOR.$this->sClassname.'Auto.php');
 
-        \IslandFuture\Sfw\Template::one()->parse($this->sPathMetaTemplates.'models'.DIRECTORY_SEPARATOR.'class.php',$arVars);
+        \IslandFuture\Sfw\Template::one()->parse($this->sPathMetaTemplates.'models'.DIRECTORY_SEPARATOR.'class.php', $arVars);
         echo 'Save model to file: '.$this->sPathMetaGen.$this->sClassname.DIRECTORY_SEPARATOR.'models'.DIRECTORY_SEPARATOR.$this->sClassname.'.php'."\n";
         \IslandFuture\Sfw\Template::one()->saveTo($this->sPathMetaGen.$this->sClassname.DIRECTORY_SEPARATOR.'models'.DIRECTORY_SEPARATOR.$this->sClassname.'.php');
     }

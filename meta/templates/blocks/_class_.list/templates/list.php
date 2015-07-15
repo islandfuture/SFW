@@ -16,17 +16,17 @@
     </tr>
     <? foreach($this->arFilter as $key => $filter): ?>
         <?php
-        if( !in_array($key, array('p','sort')) ): 
-            if(is_array($filter)){
+        if(!in_array($key, array('p','sort')) ) : 
+            if(is_array($filter)) {
                 list($op,$val) = each($filter);
-                if( is_array($val) && empty($val[0]) ){
-                    if( isset($rels[$key]) ){
+                if(is_array($val) && empty($val[0]) ) {
+                    if(isset($rels[$key]) ) {
                         $key = $key.'.'.$op;
                         list($op,$val) = each($val);
                     }
                 } elseif($op == '0') {
                     $op = 'in';
-                    $val = implode(',',$filter);
+                    $val = implode(',', $filter);
                 }
             } else {
                 $op='='; $val = $filter;
@@ -64,8 +64,10 @@
                 </select>
             </td>
         </tr>
-        <? endif; ?>
-    <? endforeach; ?>
+        <? 
+        endif; ?>
+    <? 
+endforeach; ?>
     <? $key = ''; ?>
     <tr>
         <td>
@@ -140,15 +142,16 @@ $(document).ready(function(){
                     </td>
 <:value_fields:>
                 </tr>
-                <?php endforeach; ?>
+                <?php 
+endforeach; ?>
             </tbody>
         </table>
 
         <div class="sfw_paging">
         <?php
-        if( $this->paging )
-        {
-            echo \IslandFuture\Sfw\Application::one()->block('paging',
+        if($this->paging ) {
+            echo \IslandFuture\Sfw\Application::one()->block(
+                'paging',
                 array(
                     'size'=>$this->iPageSize,
                     'current'=>$this->iPage,

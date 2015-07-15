@@ -2,14 +2,17 @@
 namespace IslandFuture\Sfw;
 
 /**
- * класс - сборник полезных методов и функций
+ * Сборник полезных методов и функций, объединенных в общий класс
+ * 
+ * @link    https://github.com/islandfuture/SFW
+ * @author  Michael Akimov <michael@island-future.ru>
+ * @version GIT: $Id$
  */
 class Tools
 {
 
     /**
      * Возвращает возраст, по дате рождения (все что младше 10 и старше 100 лет считает несуществующим)
-     *
      */
     public static function howOld($date, $is_null = '')
     {
@@ -35,6 +38,7 @@ class Tools
 
     /**
      * Возвращает, сколько прошло времени между двух дат
+     *
      * @var timestamp раняя дата
      * @var timestamp поздняя дата
      * @var boolean флаг - показывать время меньше минуты
@@ -177,6 +181,7 @@ class Tools
 
     /**
      * Возвращает дату в человеко-читаемом виде
+     *
      * @var string|timestamp дата в строковом формате или таймстамп
      *
      * @return string
@@ -214,11 +219,11 @@ class Tools
 
     public static function password_hash($sPass, $sAlgo='', $arOptions=array())
     {
-        if( !function_exists('password_hash') ) {
+        if(!function_exists('password_hash') ) {
             function password_hash($sPass, $sAlgo='', $arOptions=array())
             {
                 $sAlgo = '2y';
-                if( empty($arOptions['cost']) ) {
+                if(empty($arOptions['cost']) ) {
                     $arOptions['cost'] = '10';
                 } else {
                     if(strlen($arOptions['cost']) == 1) {
@@ -226,7 +231,7 @@ class Tools
                     }
                 }
                
-                $salt = substr(strtr(base64_encode(mcrypt_create_iv(16, MCRYPT_DEV_URANDOM)), '+', '.'),0,22);
+                $salt = substr(strtr(base64_encode(mcrypt_create_iv(16, MCRYPT_DEV_URANDOM)), '+', '.'), 0, 22);
                 return crypt($sPass, '$'.$sAlgo.'$'.$arOptions['cost'].'$'.$salt.'$');
             }
         }
@@ -262,10 +267,10 @@ class Tools
             if (is_dir($sPath.$sFile)) {
                 $sNewFile = $sFile;
                 foreach ($arVars as $key => $val) {
-                    $sNewFile = str_replace($key,$val,$sFile);
+                    $sNewFile = str_replace($key, $val, $sFile);
                 }
-                $arTmp = self::getListFilesEx($sPath.$sFile.DIRECTORY_SEPARATOR,$iDepth+1,$sNewPath.$sNewFile.DIRECTORY_SEPARATOR, $arVars);
-                $arResult = array_merge($arResult,$arTmp);
+                $arTmp = self::getListFilesEx($sPath.$sFile.DIRECTORY_SEPARATOR, $iDepth+1, $sNewPath.$sNewFile.DIRECTORY_SEPARATOR, $arVars);
+                $arResult = array_merge($arResult, $arTmp);
             } else {
                 $arResult[ $sPath.$sFile ] = $sNewPath.$sFile;
             }

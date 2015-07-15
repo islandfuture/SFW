@@ -4,10 +4,11 @@ namespace IslandFuture\Sfw;
 /**
  * Класс "Приложение", отвечающий за инициализацию, определения страницы отображения,
  * первичной обработки входных данных, контролем текущих процессов и отображением выходных данных
- * 
- * @author     Michael Akimov <michael@island-future.ru>
- * @version    GIT: $Id$
- * 
+ *
+ * @link    https://github.com/islandfuture/SFW
+ * @author  Michael Akimov <michael@island-future.ru>
+ * @version GIT: $Id$
+ *
  * @example Application::one()->init()->run();
  */
 class Application extends Only
@@ -97,7 +98,7 @@ class Application extends Only
         $this->arBlockVars['lastmessage'] = '';
         $this->arBlockVars['js_bottom'] = array();
 
-        set_error_handler(array($this,'app_error'), E_ALL | E_STRICT);
+        set_error_handler(array($this,'appError'), E_ALL | E_STRICT);
         ignore_user_abort(true);
 
         if ($this->debug == 'Y') {
@@ -261,9 +262,9 @@ class Application extends Only
     /**
      * @return bool
      */
-    public function app_error($errno , $errstr, $errfile = __FILE__, $errline =__LINE__,$errcontext=array())
+    public function appError($errno, $errstr, $errfile = __FILE__, $errline = __LINE__, $errcontext  =array())
     {
-        throw new \Exception($errstr." [file: $errfile in line: $errline]", $errno );
+        throw new \Exception($errstr." [file: $errfile in line: $errline]", $errno);
     }
     
     /**
@@ -272,7 +273,7 @@ class Application extends Only
     protected function afterConstruct()
     {
         if ($this->additionalConfigs > '' && is_array($this->additionalConfigs)) {
-            foreach($this->additionalConfigs as $fname) {
+            foreach ($this->additionalConfigs as $fname) {
                 if (file_exists($this->PATH_ROOT.'configs'.DIRECTORY_SEPARATOR.$fname)) {
                     $this->arConfig = include $this->PATH_ROOT.'configs'.DIRECTORY_SEPARATOR.$fname;
                      //= array_merge_recursive($this->arConfig, $arTmp);
@@ -288,21 +289,21 @@ class Application extends Only
      */
     public function getCurDir()
     {
-        $str = str_replace('/',DIRECTORY_SEPARATOR, $this->sCurPage);
+        $str = str_replace('/', DIRECTORY_SEPARATOR, $this->sCurPage);
         return realpath(dirname($this->PATH_APP.'pages'.DIRECTORY_SEPARATOR.$str)).DIRECTORY_SEPARATOR;
     }
     
     /**
      * Метод отвечает за запуск блоков, их отображение, а также за их кеширование.
-     * @param string $name название блока (ищет файл blocks/$name/block.php )
-     * @param array $params параметры инициализации блока.
-     * @param array $sysparams параметры для работы блока 
+     * @param string $name      название блока (ищет файл blocks/$name/block.php )
+     * @param array  $params    параметры инициализации блока.
+     * @param array  $sysparams параметры для работы блока  (например буферизировать вывод или нет, кешировать или нет) \
      *     (например буферизировать вывод или нет, кешировать или нет) \
-     * @return ???
+     * @return \IslandFuture\Sfw\Block
      */
-    public function block($sBlockName, $params=array(), $sysparams=array())
+    public function block($sBlockName, $params = array(), $sysparams = array())
     {
-        return \IslandFuture\Sfw\Block::one()->run( $sBlockName, $params, $sysparams);
+        return \IslandFuture\Sfw\Block::one()->run($sBlockName, $params, $sysparams);
     }
     
 
@@ -335,11 +336,11 @@ class Application extends Only
      *         EMAIL_TEMPLATE_DIR - если указан, то шаблон сообщения берется из указанной директории
      */
     // $this->email($row->email,'ACTIVATION',array('name' => $row->name, 'sex' => $row->sex_id, 'email' => $row->email, 'code' => $row->activation));
-    public function email($to_user, $template, $params, $c=null)
+    public function email($to_user, $template, $params, $c = null)
     {
         date_default_timezone_set('Europe/Moscow');
         if (! class_exists('PHPMailer')) {
-            include_once($this->PATH_APP.'externals/phpmailer/class.phpmailer.php');
+            include_once $this->PATH_APP.'externals/phpmailer/class.phpmailer.php';
         }
         
         if ($c === null) {
@@ -357,13 +358,13 @@ class Application extends Only
             foreach ($configs as $conf) {
                 $c[ $conf->name ] = $conf->value;
             }//end foreach
-        //var_dump($c);
+            //var_dump($c);
         }
         
         die('ERROR!!! need re develop');
-        $tmpl = Only::one()->SFW_Objects()->getOne("Big_texts","id in (SELECT id FROM configs WHERE name='EMAIL_TPL_".$template."')");
+        $tmpl = Only::one()->SFW_Objects()->getOne("Big_texts", "id in (SELECT id FROM configs WHERE name='EMAIL_TPL_".$template."')");
         if ($tmpl ) {
-            $param = Only::one()->SFW_Objects()->getByPk('Configs',$tmpl->id);
+            $param = Only::one()->SFW_Objects()->getByPk('Configs', $tmpl->id);
             // $subject = $param->value;
             $subject = Only::one()->Template()->parseContent(stripslashes($param->value), $params);
                                              
@@ -374,7 +375,7 @@ class Application extends Only
                                                        // 1 = errors and messages
                                                        // 2 = messages only
             $mail->SMTPAuth   = true;                  // enable SMTP authentication
-            if (isset($c['EMAIL_SECURE'])){
+            if (isset($c['EMAIL_SECURE'])) {
                 $mail->SMTPSecure = $c['EMAIL_SECURE'];
             }
             $mail->Host       = $c['EMAIL_HOST']; //"mail.pulsplus.ru"; // sets the SMTP server
@@ -417,14 +418,13 @@ class Application extends Only
 
     /**
      * Функция ведет учет клиентских JS скриптов, для дальнейшей вставки в конец документа
-     *
      */
     public function addClientJs($sName, $sScript, $sPosition='top')
     {
         if (empty($this->arBlockVars['js'])) {
             $this->arBlockVars['js'] = array();
         }
-        if ( empty($this->arBlockVars['js'][$sPosition]) || ! is_array($this->arBlockVars['js'][$sPosition])) {
+        if (empty($this->arBlockVars['js'][$sPosition]) || ! is_array($this->arBlockVars['js'][$sPosition])) {
             $this->arBlockVars['js'][$sPosition] = array();
         }
 
@@ -438,7 +438,7 @@ class Application extends Only
             foreach ($this->arBlockVars['js'] as $arScript) {
                 $arTmp += $arScript;
             }
-        } elseif ( isset($this->arBlockVars['js'][$sPosition])) {
+        } elseif (isset($this->arBlockVars['js'][$sPosition])) {
             $arTmp = $this->arBlockVars['js'][$sPosition];
         } else {
             $arTmp = array();
@@ -458,53 +458,57 @@ class Application extends Only
 
     /**
      * Функция ведет учет клиентских JS скриптов, для дальнейшей вставки в конец документа
-     *
      */
     public function addClientCss($sName, $sScript, $sPosition='top')
     {
         if (empty($this->arBlockVars['css'])) {
             $this->arBlockVars['css'] = array();
         }
-        if ( empty($this->arBlockVars['css'][$sPosition]) || ! is_array($this->arBlockVars['css'][$sPosition])) {
+        if (empty($this->arBlockVars['css'][$sPosition]) || ! is_array($this->arBlockVars['css'][$sPosition])) {
             $this->arBlockVars['css'][$sPosition] = array();
         }
 
         $this->arBlockVars['css'][$sPosition][$sName] = $sScript;
     }
 
-    public function getClientCss($sPosition='')
+    public function getClientCss($sPosition = '')
     {
         if ($sPosition == '') {
             $arTmp = array();
             foreach ($this->arBlockVars['css'] as $arScript) {
                 $arTmp += $arScript;
             }
-        } elseif ( isset($this->arBlockVars['css'][$sPosition])) {
+        }
+        elseif (isset($this->arBlockVars['css'][$sPosition])) {
             $arTmp = $this->arBlockVars['css'][$sPosition];
-        } else {
+        }
+        else {
             $arTmp = array();
         }
         
         $sHtml = '';
         foreach ($arTmp as $sScript) {
             if(substr($sScript, 0, 4) == 'http' || substr($sScript, 0, 1) == '/') {
-                $sHtml .= '<link rel="stylesheet" href="'.$sScript.'" />'."\n";
+                $sHtml .= '<link rel="stylesheet" href="'.$sScript.'" />' . "\n";
             } else {
-                $sHtml .= '<style type="text/css">'."\n".$sScript."\n".'</style>'."\n";
+                $sHtml .= '<style type="text/css">' . "\n" . $sScript . "\n" . '</style>' . "\n";
             }
         }
         
-        return "\n<!-- BEGIN: all external css $sPosition -->\n".$sHtml."\n<!-- END: all external css $sPosition -->\n";
+        return "\n<!-- BEGIN: all external css $sPosition -->\n" . $sHtml . "\n<!-- END: all external css $sPosition -->\n";
     }
 
     /**
      * метод используется для запуска тестовых сценариев
+     * @deprecated
+     *
+     * @todo переделать на phpUnit
      */
     public function test($test_name, $params = array())
     {
         $name = $this->PATH_APP.'tests'.DIRECTORY_SEPARATOR.$test_name.'.php';
 
-        if (! file_exists( $name )) {
+        if (! file_exists($name)) {
             $name = $this->PATH_APP.'tests'.DIRECTORY_SEPARATOR.$test_name.DIRECTORY_SEPARATOR.'index.php';
             
             if (! file_exists($name)) {
@@ -515,7 +519,7 @@ class Application extends Only
 
         if (is_array($params)) {
             $prefix = str_replace(DIRECTORY_SEPARATOR, '_', $test_name);
-            extract( $params, EXTR_PREFIX_ALL, $prefix);
+            extract($params, EXTR_PREFIX_ALL, $prefix);
         }
 
         include $name;
@@ -538,7 +542,7 @@ class Application extends Only
         } elseif ($this->h1 > '') {
             return $this->h1;
         } else {
-            return 'Страница: '.$this->sCurPage;
+            return 'Страница: ' . $this->sCurPage;
         }
     }//end function
 
@@ -670,6 +674,5 @@ class Application extends Only
         */
         return false;
     }
-
 
 }

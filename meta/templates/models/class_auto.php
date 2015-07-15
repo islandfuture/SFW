@@ -27,11 +27,12 @@ class <:classname:>Auto extends \IslandFuture\Sfw\Data\Model
     
     /**
      * функция возвращает способ генерации значения первичного ключа
+     *
      * @example
      *      UUID - случайное число между $uidMin и $uidMax
      *      AUTOINC - автоинкрементный счетчик (в MySQL)
      *      GUID - случайное значение
-     * @return string
+     * @return  string
      */
     public function getIdDefault()
     {
@@ -54,7 +55,7 @@ class <:classname:>Auto extends \IslandFuture\Sfw\Data\Model
     public function getClearFields()
     {
         return array(
-<:clear_fields:>
+        <:clear_fields:>
         );
     }
 
@@ -65,12 +66,12 @@ class <:classname:>Auto extends \IslandFuture\Sfw\Data\Model
     public function getDefault()
     {
         return array(
-<:defaults:>
+        <:defaults:>
         );
     }// end method
 
     /**
      * список функций отвечающих за свзяи с другими моделями
      */
-<:relations_fields:>
+    <:relations_fields:>
 }

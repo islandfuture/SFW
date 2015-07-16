@@ -61,7 +61,7 @@ foreach ($arFiles as $sFrom => $sTo) {
     copy($sFrom, $sTo);
 }
 
-$arFiles =  \IslandFuture\Sfw\Tools::getListFilesEx($sPathGen.'pages'.DIRECTORY_SEPARATOR, 0, $sPathApp.'pages'.DIRECTORY_SEPARATOR, array());
+$arFiles =  \IslandFuture\Sfw\Tools::getListFilesEx($sPathGen.'pages'.DIRECTORY_SEPARATOR, 0, $sPathApp.'pages'.DIRECTORY_SEPARATOR.'panel'.DIRECTORY_SEPARATOR, array());
 foreach ($arFiles as $sFrom => $sTo) {
     echo "Create file [$sTo]\n";
     copy($sFrom, $sTo);

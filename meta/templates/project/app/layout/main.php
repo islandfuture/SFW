@@ -23,7 +23,6 @@
 </head>
 <body>
 <div class="container">
-    <h1><?=\IslandFuture\Sfw\Application::one()->getTitle() ?></h1>
 
     <?=\IslandFuture\Sfw\Application::one()->sPageContent ?>
 </div>

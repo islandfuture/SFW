@@ -1,5 +1,4 @@
 <?php
-    
     /* You are ready? */
     
     

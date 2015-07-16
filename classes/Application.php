@@ -603,7 +603,6 @@ class Application extends Only
     public function route()
     {
         $sPath = $this->PATH_PAGES;
-        
         if (file_exists($sPath.$this->sCurPage.'.php')) {
             return true;
         }
@@ -612,7 +611,6 @@ class Application extends Only
             $this->sCurPage = $this->sCurPage.'/index';
             return true;
         }
-
         $sFname = $this->route > '' ? $this->route : 'route.php';
         $sRouteFile = $this->PATH_ROOT.'config'.DIRECTORY_SEPARATOR.$sFname;
 

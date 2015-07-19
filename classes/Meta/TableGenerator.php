@@ -50,7 +50,7 @@ class TableGenerator extends Generator
                 $arField['sBinary'] = 'yes';
             }
 
-            $arVars['sql_fields'] .= "    ".'`'.$sField.'` '.$arField['sType'].' ';
+            $arVars['sql_fields'] .= "    ".'`'.$sField.'` '.$arField['sType'];
 
             if (isset($arField['iLength']) &&  $arField['iLength'] > 0) {
                 $arVars['sql_fields'] .= '('.$arField['iLength'].') ';
@@ -66,7 +66,7 @@ class TableGenerator extends Generator
             }
 
             if (empty($arField['isNull']) || $arField['isNull'] == 'no' ) {
-                $arVars['sql_fields'] .= 'NOT NULL ';
+                $arVars['sql_fields'] .= ' NOT NULL ';
             }
 
             if (isset($arField['sDefault']) ) {
@@ -74,30 +74,30 @@ class TableGenerator extends Generator
                     $arVars['sql_fields'] .= ' auto_increment ';
                 } else {
                     if(in_array(strtolower($arField['sDefault']), array('now()','uuid()','current_timestamp')) ) {
-                        $arVars['sql_fields'] .= "DEFAULT ".$arField['sDefault']." ";
+                        $arVars['sql_fields'] .= " DEFAULT ".$arField['sDefault']." ";
                     } else {
                         if($arField['sDefault'] == 'UUID' ) {
                             $arField['sDefault'] = '';
                         }
                         
                         if($arField['sDefault'] != 'NULL' ) {
-                            $arVars['sql_fields'] .= "DEFAULT '".$arField['sDefault']."' ";
+                            $arVars['sql_fields'] .= " DEFAULT '".$arField['sDefault']."' ";
                         }
                     }
                 }
             }
 
             if(isset($arField['sComment']) ) {
-                $arVars['sql_fields'] .= "COMMENT '".$arField['sComment']."'";
+                $arVars['sql_fields'] .= " COMMENT '".$arField['sComment']."'";
             } else if(isset($arField['sTitle']) ) {
-                $arVars['sql_fields'] .= "COMMENT '".$arField['sTitle']."'";
+                $arVars['sql_fields'] .= " COMMENT '".$arField['sTitle']."'";
             }
 
             if(isset($arField['sPrimary']) && $arField['sPrimary'] == 'yes') {
                 $arVars['primary_key'] = $sField;
             }
 
-            $arVars['sql_fields'] .= "\n";
+            $arVars['sql_fields'] .= ",\n";
         }
         
         $arVars['sql_fields'] .= '    PRIMARY KEY  (`'.$arVars['primary_key'].'`)';

@@ -19,6 +19,23 @@
     }
 }
 ```
+
+Если будуте рассылать почту и юзаете bootstrap, то лучше используйте такой конфиг:
+```json
+{
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/islandfuture/SFW.git"
+        }
+    ],
+    "require": {
+        "islandfuture/sfw": "dev-master"
+        "phpmailer/phpmailer": "5.2.*"
+        "twbs/bootstrap": "3.3.*"
+    }
+}
+```
 Запускаете установку:
 
 ```

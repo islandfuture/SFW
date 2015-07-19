@@ -20,7 +20,7 @@ if (empty($_GET['model'])) {
     echo "Where MODEL is name meta models\n";
     return false;
 }
-/*
+
 $arTasks = array('Table','Model','Blocks','Pages');
 foreach($arTasks as $sCommand) {
     $sUCommand = ucfirst($sCommand);
@@ -46,11 +46,24 @@ foreach($arTasks as $sCommand) {
     echo "Run generator: $sCommand\n";
     $oGenerator->run();
 }
-*/
+
+if (! file_exists($sPathApp.'meta'.DIRECTORY_SEPARATOR.'gen')) {
+    mkdir($sPathApp.'meta'.DIRECTORY_SEPARATOR.'gen');
+}
+
+if (! file_exists($sPathApp.'meta'.DIRECTORY_SEPARATOR.'gen'.DIRECTORY_SEPARATOR.$_GET['model'])) {
+    mkdir($sPathApp.'meta'.DIRECTORY_SEPARATOR.'gen'.DIRECTORY_SEPARATOR.$_GET['model']);
+}
+
 $sPathGen = $sPathApp.'meta'.DIRECTORY_SEPARATOR.'gen'.DIRECTORY_SEPARATOR.$_GET['model'].DIRECTORY_SEPARATOR;
 
 $arFiles =  \IslandFuture\Sfw\Tools::getListFilesEx($sPathGen.'models'.DIRECTORY_SEPARATOR, 0, $sPathApp.'models'.DIRECTORY_SEPARATOR, array());
 foreach ($arFiles as $sFrom => $sTo) {
+    if(strpos($sTo,$_GET['model'].'.php') > 0 && file_exists($sTo)) {
+        
+        echo "File [".$_GET['model'].".php] already exists, so save generic version to [$sFrom]\n";
+        continue;
+    }
     echo "Create file [$sTo]\n";
     copy($sFrom, $sTo);
 }

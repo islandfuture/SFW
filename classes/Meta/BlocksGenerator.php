@@ -72,7 +72,7 @@ class BlocksGenerator extends Generator
         
         foreach ($this->arFields as $sField => $arField) {
             $sTitle = (isset($arField['sTitle']) ? $arField['sTitle'] : $sField);
-            $arVars['option_fields'] .= "                ".'<option value="'.$sField.'" <?=($key==\''.$sField.'\' ? \'selected="selected"\' : \'\')?>>'.$sTitle.'</option>'."\n";
+            $arVars['option_fields'] .= "                ".'<option value="'.$sField.'" <?=($iKey==\''.$sField.'\' ? \'selected="selected"\' : \'\')?>>'.$sTitle.'</option>'."\n";
             
             if (isset($arField['sPrimary']) && 'yes'==$arField['sPrimary']) {
                 $arVars['id_name'] = $sField;

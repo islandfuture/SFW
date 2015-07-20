@@ -14,23 +14,23 @@
         <th>Значение</th>
         <th>Связка</th>
     </tr>
-    <? foreach($this->arFilter as $key => $filter): ?>
+    <?php foreach($this->arFilter as $iKey => $filter): ?>
         <?php
-        if(!in_array($key, array('p','sort')) ) : 
-            if(is_array($filter)) {
+        if (!in_array($iKey, array('p','sort')) ) : 
+            if(is_array($filter)):
                 list($op,$val) = each($filter);
-                if(is_array($val) && empty($val[0]) ) {
-                    if(isset($rels[$key]) ) {
-                        $key = $key.'.'.$op;
+                if (is_array($val) && empty($val[0]) ):
+                    if (isset($rels[$iKey])):
+                        $iKey = $iKey.'.'.$op;
                         list($op,$val) = each($val);
-                    }
-                } elseif($op == '0') {
+                    endif;
+                elseif ($op == '0'):
                     $op = 'in';
                     $val = implode(',', $filter);
-                }
-            } else {
+                endif;
+            else:
                 $op='='; $val = $filter;
-            }
+            endif;
         ?>
         <tr>
             <td>
@@ -64,11 +64,13 @@
                 </select>
             </td>
         </tr>
-        <? 
+        <?php 
         endif; ?>
-    <? 
-endforeach; ?>
-    <? $key = ''; ?>
+    <?php
+    endforeach; ?>
+
+    <?php
+    $iKey = ''; ?>
     <tr>
         <td>
             <select name="<:classname:>[filter][fields][]">
@@ -121,7 +123,7 @@ $(document).ready(function(){
     <div class="panel-heading"><:classname:></div>
     <div class="panel-body">
         <p>
-            Найдено: <?php echo $this->iPageSize < $this->iCntModels ? $this->iPageSize : $this->iCntModels; ?> из <?php echo $this->iCntModels; ?>
+            Найдено: <?=$this->iPageSize < $this->iCntModels ? $this->iPageSize : $this->iCntModels?> из <?=$this->iCntModels; ?>
         &rarr; <a href="<:websubdir:>create/">Создать</a>
         </p>
         <br />
@@ -133,7 +135,8 @@ $(document).ready(function(){
                 </tr>
             </thead>
             <tbody>
-                <?php foreach($this->arItems as $iPos => $oModel): ?>
+                <?php
+                foreach($this->arItems as $iPos => $oModel): ?>
                 <tr valign="top">
                     <td>
                         <a href="<:websubdir:>edit/?<:id_name:>=<=$oModel-><:id_name:>?>" button="role" class="btn btn-default btn-xs mb5">Изменить</a>
@@ -143,13 +146,13 @@ $(document).ready(function(){
 <:value_fields:>
                 </tr>
                 <?php 
-endforeach; ?>
+                endforeach; ?>
             </tbody>
         </table>
 
         <div class="sfw_paging">
         <?php
-        if($this->paging ) {
+        if ($this->paging ):
             echo \IslandFuture\Sfw\Application::one()->block(
                 'paging',
                 array(
@@ -158,11 +161,10 @@ endforeach; ?>
                     'total_rec'=> $this->iCntModels
                 )
             );
-        }
+        endif;
         ?>
         </div>
 
     </div>
 
 </div>
-

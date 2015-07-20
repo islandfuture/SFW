@@ -46,10 +46,10 @@ class ModelGenerator extends Generator
             if (isset($arField['sPrimary']) && 'yes'==$arField['sPrimary']) {
                 $arVars['id_name'] = $sField;
                 
-                if (empty($this->arField['sDefault'])) {
+                if (empty($arField['sDefault'])) {
                     $arVars['id_default'] = '';
                 } else {
-                    $arVars['id_default'] = $this->arField['sDefault'];
+                    $arVars['id_default'] = $arField['sDefault'];
                     if ($arVars['id_default'] == 'UUID') {
                         $arVars['primary_id_param'] = "\n\t/* используется для выбора ИД пользователя */";
                         $arVars['primary_id_param'] .= "\n\tpublic \$uidMin = 100000;";

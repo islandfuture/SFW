@@ -80,7 +80,7 @@ foreach ($arFiles as $sFrom => $sTo) {
     copy($sFrom, $sTo);
 }
 
-echo "Create table\n";
+echo "Create table for model ".$_GET['model']."\n";
 $sSQL = file_get_contents($sPathGen.'sql'.DIRECTORY_SEPARATOR.'create.sql');
 \IslandFuture\Sfw\Data\Storages::one()->execute($sSQL);
 echo "\n";

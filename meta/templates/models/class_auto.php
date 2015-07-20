@@ -6,12 +6,12 @@
  */
 class <:classname:>Auto extends \IslandFuture\Sfw\Data\Model
 {
-    
+    <:primary_id_param:>
     /**
      * функция возвращает название таблицы в которой хранятся сущности данного класса
      * @return string
      */
-    public function getTable()
+    static public function getTable()
     {
         return '<:tablename:>';
     }
@@ -20,7 +20,7 @@ class <:classname:>Auto extends \IslandFuture\Sfw\Data\Model
      * функция возвращает название модели
      * @return string
      */
-    public function getTitle()
+    static public function getTitle()
     {
         return '<:titlename:>';
     }
@@ -34,7 +34,7 @@ class <:classname:>Auto extends \IslandFuture\Sfw\Data\Model
      *      GUID - случайное значение
      * @return  string
      */
-    public function getIdDefault()
+    static public function getIdDefault()
     {
         return '<:id_default:>';
     }
@@ -43,7 +43,7 @@ class <:classname:>Auto extends \IslandFuture\Sfw\Data\Model
      * функция возвращает название первичного ключа
      * @return string
      */
-    public function getIdName()
+    static public function getIdName()
     {
         return '<:id_name:>';
     }
@@ -52,7 +52,7 @@ class <:classname:>Auto extends \IslandFuture\Sfw\Data\Model
      * функция возвращает список полей модели
      * @return array
      */
-    public function getClearFields()
+    static public function getClearFields()
     {
         return array(
         <:clear_fields:>
@@ -63,7 +63,7 @@ class <:classname:>Auto extends \IslandFuture\Sfw\Data\Model
      * функция возвращает значение по умолчанию для полей модели
      * @return array
      */
-    public function getDefault()
+    static public function getDefault()
     {
         return array(
         <:defaults:>

@@ -234,6 +234,8 @@ class Tools
                 $salt = substr(strtr(base64_encode(mcrypt_create_iv(16, MCRYPT_DEV_URANDOM)), '+', '.'), 0, 22);
                 return crypt($sPass, '$'.$sAlgo.'$'.$arOptions['cost'].'$'.$salt.'$');
             }
+        } else {
+            $sAlgo = PASSWORD_BCRYPT;
         }
         
         return password_hash($sPass, $sAlgo, $arOptions);

@@ -40,6 +40,7 @@ class ModelGenerator extends Generator
         $arVars['clear_fields'] = '';
         $arVars['defaults'] = '';
         $arVars['relations_fields'] = '';
+        $arVars['primary_id_param'] = '';
 
         foreach ($this->arFields as $sField => $arField) {
             if (isset($arField['sPrimary']) && 'yes'==$arField['sPrimary']) {
@@ -49,6 +50,11 @@ class ModelGenerator extends Generator
                     $arVars['id_default'] = '';
                 } else {
                     $arVars['id_default'] = $this->arField['sDefault'];
+                    if ($arVars['id_default'] == 'UUID') {
+                        $arVars['primary_id_param'] = "\n\t/* используется для выбора ИД пользователя */";
+                        $arVars['primary_id_param'] .= "\n\tpublic \$uidMin = 100000;";
+                        $arVars['primary_id_param'] .= "\n\tpublic \$uidMax = 1000000;";
+                    }
                 }
             } elseif (isset($arField['sDefault'])) {
                 $arVars['defaults'] .= "            '".$sField."' => '".$arField['sDefault']."',\n";

@@ -1,5 +1,7 @@
 <?php
-
+if (! empty($_GET['logout']) && 'yes'== $_GET['logout']) {
+    \IslandFuture\Sfw\ActiveUser::one()->logout();
+}
 if (\IslandFuture\Sfw\ActiveUser::one()->id == '') {
     $oUsersLoginBlock = $this->block('users.login', array(
             'isAdminSection' => true
@@ -24,5 +26,7 @@ if (\IslandFuture\Sfw\ActiveUser::one()->id == '') {
     return;
 } else {
     $this->setTitle('Панель администратора');
-
+?>
+<a href="?logout=yes">Выйти</a>
+<?
 }

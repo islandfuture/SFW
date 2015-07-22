@@ -30,7 +30,7 @@ class BlocksGenerator extends Generator
         }
 
         if ($this->sWebSubDir == '') {
-            $this->sWebSubDir = '/admin/'.strtolower($this->sClassname).'/';
+            $this->sWebSubDir = '/panel/'.strtolower($this->sClassname).'/';
         }
         
         $this->saveBlockInfo();

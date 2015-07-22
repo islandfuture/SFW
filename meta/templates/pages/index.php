@@ -23,7 +23,7 @@ if (isset($_POST['<:classname:>']['deleteIds']) && is_array($_POST['<:classname:
 $this->block(
     '<:classlower:>.list', array(),
     array(
-        'template' => 'list'
+        'template' => 'admin'
     )
 );
 

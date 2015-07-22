@@ -159,7 +159,7 @@ return array(
             'sType' => 'int',
             'sPrimary' => 'no',
             'sDefault' => '1',
-            'sComment' => '0-guest, 1-user, 2-teacher, 3-admin',
+            'sComment' => '0-guest, 1-user, 2-moderator, 3-admin',
             'isNull' => 'no'
         ),
         'iStatusId' => array(

@@ -27,10 +27,16 @@ if(! empty($_REQUEST['<:classname:>']['clear'])
                 $arFilter[ $field ] = $arFilters['value1'][$i];
             } elseif($arFilters['op'][$i] == '<' ) {
                 $arFilter[ $field ] = array('<' => $arFilters['value1'][$i] );
+            } elseif($arFilters['op'][$i] == '>' ) {
+                $arFilter[ $field ] = array('>' => $arFilters['value1'][$i] );
+            } elseif($arFilters['op'][$i] == '<=' ) {
+                $arFilter[ $field ] = array('<=' => $arFilters['value1'][$i] );
+            } elseif($arFilters['op'][$i] == '>=' ) {
+                $arFilter[ $field ] = array('>=' => $arFilters['value1'][$i] );
             } elseif($arFilters['op'][$i] == 'in' ) {
-                $arFilter[ $field ] = explode(',', $arFilters['value1'][$i]);
+                $arFilter[ $field ] = array('in' => explode(',', $arFilters['value1'][$i]));
             } elseif($arFilters['op'][$i] == 'between' ) {
-                $arFilter[ $field ] = array('from' => $arFilters['value1'][$i], 'to' => $arFilters['value2'][$i] );
+                $arFilter[ $field ] = array('between' => array($arFilters['value1'][$i],$arFilters['value2'][$i]) );
             } elseif($arFilters['op'][$i] == 'like' ) {
                 $arFilter[ $field ] = array('like' => $arFilters['value1'][$i] );
             }

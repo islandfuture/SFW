@@ -15,15 +15,15 @@ return array(
             'sComment' => 'код',
             'isNull' => 'no'
         ),
-        'sPreviewId' => array(
+        'sPreviewUrl' => array(
             'sTitle' => 'Картинка',
             'sType' => 'varchar',
             'sPrimary' => 'no',
-            'iLength' => '64',
+            'iLength' => '255',
             'sCodepage' => 'ascii',
             'sBinary' => 'bin',
             'sDefault' => '0',
-            'sComment' => 'код картинки превью',
+            'sComment' => 'url картинки превью',
             'isNull' => 'no'
         ),
         'sTitle' => array(
@@ -69,14 +69,6 @@ return array(
             'sComment' => 'создатель поста',
             'isNull' => 'no'
         ),
-        'iLikeCnt' => array(
-            'sTitle' => 'Понравилось',
-            'sType' => 'int',
-            'sPrimary' => 'no',
-            'sDefault' => '0',
-            'sComment' => 'скольким понравилось',
-            'isNull' => 'no'
-        ),
         'iViewCnt' => array(
             'sTitle' => 'Просмотры',
             'sType' => 'int',
@@ -99,22 +91,6 @@ return array(
             'sPrimary' => 'no',
             'sDefault' => '1',
             'sComment' => 'кто может комментировать (0 - без комментариев, 1 - юзеры, 2 - учителя)',
-            'isNull' => 'no'
-        ),
-        'iCommentLastId' => array(
-            'sTitle' => 'Последний комментарий',
-            'sType' => 'bigint',
-            'sPrimary' => 'no',
-            'sDefault' => '0',
-            'sComment' => 'код последнего комментария',
-            'isNull' => 'no'
-        ),
-        'tCommentLastDate' => array(
-            'sTitle' => 'Откомментировано',
-            'sType' => 'timestamp',
-            'sPrimary' => 'no',
-            'sDefault' => '0000-00-00 00:00:00',
-            'sComment' => 'дата последнего комментария',
             'isNull' => 'no'
         ),
         'iStatusId' => array(
@@ -153,7 +129,6 @@ return array(
     ),
     'arRelations' => array(
         'creator' => array('ONE', 'sCreatorId', 'Users', 'id'),
-        'preview' => array('ONE', 'sPreviewId', 'Attachments', 'id'),
         'status' => array('VIRTUAL', 'iStatusId', array(
                 '0' => array('не активирован'),
                 '1' => array('активирован'),

@@ -114,6 +114,13 @@ class Storages extends \IslandFuture\Sfw\Only
                         case '!=':
                             $sWhere .= " AND $table.`" . $key . "` " . $op . " '" . addslashes($val) . "'";
                             break;
+                        case 'between':
+                            if (is_array($val)) {
+                                $sWhere .= " AND $table.`" . $key . "` " . $op . " '" . addslashes($val[0]) . "' and '" . addslashes($val[1]) . "'";
+                            } else {
+                                $sWhere .= " AND ($table.`" . $key . "` " . $op . " " . addslashes($val) . ")";
+                            }
+                            break;
                         case '!in':
                             if (is_array($val)) {
                                 foreach($val AS &$value )

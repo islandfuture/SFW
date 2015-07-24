@@ -22,7 +22,7 @@
 
         <div class="sfw_paging">
         <?php
-        if ($this->paging ):
+        if ($this->isPaging):
             echo \IslandFuture\Sfw\Application::one()->block(
                 'sfw.paging',
                 array(
@@ -31,7 +31,7 @@
                     'iTotal'=> $this->iCntModels
                 ),
                 array(
-                    'tempalte' => 'default'
+                    'template' => 'default'
                 )
             );
         endif;

@@ -65,10 +65,10 @@ if (empty($arFilter['p'])) {
 }
 
 if (empty($arFilter['size'])) {
-    if (isset($_GET['size'])) {
+    if (! empty($_GET['size'])) {
         $this->iPageSize = (int)$_GET['size'];
     } else {
-        $this->iPageSize = 0;
+        $this->iPageSize = 20;
     }
 } else {
     $this->iPageSize = (int)$arFilter['size'];
@@ -91,8 +91,8 @@ $this->sFilterUrl .= '/';
 $this->iCntModels = \IslandFuture\Sfw\Data\Storages::getCountAll($this->getParams());
 
 // если размер известен, то запоминаем его, если нет, то ставим значение по умолчанию
-if(isset($this->sort) ) {
-    $sort = $this->sort;
+if(isset($this->arSort) ) {
+    $sort = $this->arSort;
 } elseif(isset($_REQUEST['sort']) ) {
     $sort = $_REQUEST['sort'];
     if(isset($_REQUEST['dir']) ) {
@@ -117,14 +117,14 @@ foreach( $sort as $name => $dir ){
 }//end foreach
 $orderby .= ' id asc';
 
-$this->sort = $sort;
+$this->arSort = $sort;
 
 $this->arItems = \IslandFuture\Sfw\Data\Storages::getAll($this->getParams());
 
 // настраиваем параметр для передачи в шаблон - отображать пейджинг или нет
 if($this->iPageSize == 0 ) {
-    $this->paging = false;
+    $this->isPaging = false;
 } else {
-    $this->paging = ($this->paging===false ? false : true );
+    $this->isPaging = ($this->isPaging===false ? false : true );
 }
 

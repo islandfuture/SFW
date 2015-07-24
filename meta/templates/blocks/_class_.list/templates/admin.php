@@ -141,7 +141,10 @@ $(document).ready(function(){
                     <td>
                         <a href="<:websubdir:>edit/?<:id_name:>=<?=$oModel-><:id_name:>?>" button="role" class="btn btn-default btn-xs mb5">Изменить</a>
                         <br />
-                        <a href="<:websubdir:>del/?<:id_name:>=<?=$oModel-><:id_name:>?>" onclick="confirm('Вы действительно хотите удалить?');"  role="button" class="btn btn-xs btn-danger">Удалить</a>
+                        <form method="post">
+                        <input type="hidden" name="<:classname:>[deleteIds][]" value="<?=$oModel-><:id_name:>?>" />
+                        <input type="submit" role="button" class="btn btn-xs btn-danger" value="Удалить" onclick="confirm('Вы действительно хотите удалить?');" />
+                        </form>
                     </td>
 <:value_fields:>
                 </tr>
@@ -152,13 +155,16 @@ $(document).ready(function(){
 
         <div class="sfw_paging">
         <?php
-        if ($this->paging ):
-            echo \IslandFuture\Sfw\Application::one()->block(
-                'paging',
+        if ($this->isPaging):
+            \IslandFuture\Sfw\Application::one()->block(
+                'sfw.paging',
                 array(
-                    'size'=>$this->iPageSize,
-                    'current'=>$this->iPage,
-                    'total_rec'=> $this->iCntModels
+                    'iSize'=>$this->iPageSize,
+                    'iCurrent'=>$this->iPage,
+                    'iTotal'=> $this->iCntModels
+                ),
+                array(
+                    'template' => 'default'
                 )
             );
         endif;

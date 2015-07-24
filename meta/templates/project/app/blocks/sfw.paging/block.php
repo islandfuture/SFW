@@ -9,20 +9,29 @@
  * @param string sClass название специального CSS класса для оформления блока с пагинацией
  */
 
-if(empty($this->iSize) ) {
+if($this->iSize == 0) {
     $this->iSize = 20;
 }
 
-if(empty($this->iCurrent) ) {
+if($this->iCurrent==0) {
     $this->iCurrent = 1; // текущая страница
 }
 
-if(empty($this->iTotal) ) {
+if($this->iTotal==0) {
     $this->iTotal = $this->iSize; // общее количество записей
 }
 
-if(empty($this->sUrl) ) {
+if($this->sUrl=='') {
     $this->sUrl = $_SERVER['REQUEST_URI'];
+}
+
+$sNewUrl = preg_replace('/&p=\d{0,5}/', '', $this->sUrl);
+if($sNewUrl == null || $sNewUrl == $this->sUrl) {
+    $sNewUrl = preg_replace('/\?p=\d{0,5}/', '', $this->sUrl);
+}
+
+if($sNewUrl !== null ) {
+    $this->sUrl = $sNewUrl;
 }
 
 if(strpos($this->sUrl, '?') === false ) {
@@ -31,15 +40,4 @@ if(strpos($this->sUrl, '?') === false ) {
     $this->sGlue = '&';
 }
 
-$sNewUrl = preg_replace('/&p=\d{0,5}/', '', $this->sUrl);
-if($sNewUrl == null ) {
-    $sNewUrl = preg_replace('/?p=\d{0,5}/', '', $this->sUrl);
-}
-
-if($sNewUrl !== null ) {
-    $this->sUrl = $sNewUrl;
-}
-
-
-$$this->iTotalPage = ceil($this->iTotal / $this->iSize);
-
+$this->iTotalPage = ceil($this->iTotal / $this->iSize);

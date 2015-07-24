@@ -24,7 +24,7 @@ if (! empty($arParams['arFilter']) && ! empty($arParams['sModel'])) {
 
 $iCnt = 0;
 if (sizeof($this->arItems) > 0) {
-    \IslandFuture\Sfw\Storages::one()->begin();
+    \IslandFuture\Sfw\Data\Storages::one()->begin();
     foreach ($this->arItems as $oItem) {
         if ($oItem->delete()) {
             $iCnt++;
@@ -36,9 +36,9 @@ if (sizeof($this->arItems) > 0) {
     $this->arItems = null;
     if ($iCnt == 0) {
         $iCnt = -1;
-        \IslandFuture\Sfw\Storages::one()->rollback();
+        \IslandFuture\Sfw\Data\Storages::one()->rollback();
     } else {
-        \IslandFuture\Sfw\Storages::one()->commit();
+        \IslandFuture\Sfw\Data\Storages::one()->commit();
     }
 }
-$this->iDeleteCnt = $iCnt;
+$this->arBuffered[$this->sBlockName.':result'] = $iCnt;

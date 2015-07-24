@@ -4,7 +4,7 @@ $this->setTitle('Список объектов <:titlename:>');
 
 if (isset($_POST['<:classname:>']['deleteIds']) && is_array($_POST['<:classname:>']['deleteIds'])) {
     $oBlock = $this->block('<:classlower:>.del', array(), array());
-    if ($oBlock->iDeleteCnt == -1) {
+    if ($oBlock->arBuffered['<:classlower:>.del:result'] == -1) {
 ?>
         <p class="bg-danger">
             При удалении возникла ошибка.
@@ -13,7 +13,7 @@ if (isset($_POST['<:classname:>']['deleteIds']) && is_array($_POST['<:classname:
     } else {
 ?>
         <p class="bg-info">
-            Элементов удалено - <?=$oBlock->iDeleteCnt?>.
+            Элементов удалено - <?=$oBlock->arBuffered['<:classlower:>.del:result']?>.
         </p>
 <?php
     }

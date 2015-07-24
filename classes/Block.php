@@ -58,6 +58,9 @@ class Block extends Only
             }
             $arParams = array();
 
+            $this->sBlockName = $sBlockName;
+            $oBlock->arBuffered[$sBlockName.':result'] = null;
+            
             $sFileName = $oApp->PATH_APP.'blocks'.DIRECTORY_SEPARATOR.$sBlockName.DIRECTORY_SEPARATOR.'block.php';
             if(!file_exists($sFileName) ) {
                 throw new \Exception("блок [$sBlockName] не найден в разделе блоков");
@@ -89,7 +92,7 @@ class Block extends Only
             }
     
             include $sFileName;
-            
+
             if($sTemplate ) {
                 echo $this->show();
             }
@@ -103,15 +106,24 @@ class Block extends Only
                 ob_end_clean();
             }
 
+            $this->arParams[$this->iCur] = array();      
             $this->iCur--;
+        }
+        catch( \PdoException $e)
+        {
+            $this->arParams[$this->iCur] = array();      
+            $this->iCur--;
+            $oBlock->arBuffered[$sBlockName.':result'] = false;
+            throw $e;
         }
         catch( \Exception $e)
         {
+            $this->arParams[$this->iCur] = array();      
             $this->iCur--;
+            $oBlock->arBuffered[$sBlockName.':result'] = false;
             throw $e;
         }
         
-        $this->arParams[$this->iCur] = array();      
         return $this;
     }
     

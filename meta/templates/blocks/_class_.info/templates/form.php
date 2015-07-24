@@ -14,10 +14,14 @@
             <input type="submit" class="btn btn-primary" value="Сохранить" />
             &nbsp;
             <a href="<:websubdir:>" class=" text-danger">Отмена</a>
-            &nbsp;&nbsp;&nbsp;
-            <a href="<:websubdir:>/del/?id=<?=$this->oModel-><:id_name:>?>" class="text-danger" onclick="confirm('Вы действительно хотите удалить?');">Удалить запись <?=$this->oModel-><:id_name:>?></a>
-
         </div>
     </div>
 </form>
+        <div class="col-sm-offset-2 col-sm-7 text-right">
+            <form method="post" action="<:websubdir:>">
+                <input type="hidden" name="<:classname:>[deleteIds][]" value="<?=$this->oModel-><:id_name:>?>" />
+                <input type="submit" role="button" class="btn btn-xs btn-danger" value="Удалить" onclick="confirm('Вы действительно хотите удалить?');" />
+            </form>
+        </div>
+
 </div>

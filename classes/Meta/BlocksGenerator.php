@@ -163,6 +163,8 @@ class BlocksGenerator extends Generator
             }
         }
         
+        $arVars['text_fields'] = '';
+        
         /* перебирем все поля */
         foreach ($this->arFields as $sField => $arField) {
             if (empty($arField['sTitle'])) {
@@ -174,6 +176,7 @@ class BlocksGenerator extends Generator
                 if ('char' == $arField['sType'] || 'varchar' == $arField['sType']) {
                     $arVars['primary_type'] = '(string)';
                 }
+                $arVars['text_fields'] .= '        <p><label>'.$arField['sTitle'].'</label>: <?=$this->oModel->'.$sField.'?></p>';
             } else {
 
                 if ((isset($arField['iLength']) && $arField['iLength'] > 256) || ('text' == $arField['sType'])) {
@@ -188,6 +191,8 @@ class BlocksGenerator extends Generator
     </div>
             
 EOT;
+
+                    $arVars['text_fields'] .= '        <p><label>'.$arField['sTitle'].'</label>: <?=$this->oModel->'.$sField.'?></p>';
                 } elseif (isset($arFieldRelations[$sField]) && 'ONE' == $arFieldRelations[$sField][0]) {
                     $sRelation = $arFieldRelations[$sField]['sRelName'];
     
@@ -204,6 +209,16 @@ EOT;
     </div>
 
 EOT;
+
+                    $arVars['text_fields'] .= <<<EOT
+
+        <p>
+            <label>{$arField['sTitle']}</label>: <?=\$this->oModel->{$sField}?>
+            <?php if(\$this->oModel->{$sRelation}()): ?>
+                <span id="help{$arVars['classname']}[{$sField}]" class="help-block">(<?=\$this->oModel->{$sRelation}()->getName()?>)</span>
+            <?php endif; ?>
+        </p>
+EOT;
                 } elseif (isset($arFieldRelations[$sField]) && 'VIRTUAL' == $arFieldRelations[$sField][0]) {
                     $sRelation = $arFieldRelations[$sField]['sRelName'];
     
@@ -219,6 +234,17 @@ EOT;
     </div>
 
 EOT;
+
+                    $arVars['text_fields'] .= <<<EOT
+
+        <p>
+            <label>{$arField['sTitle']}</label>: <?=\$this->oModel->{$sField}?>
+            <?php if(\$this->oModel->{$sRelation}()): ?>
+                <span id="help{$arVars['classname']}[{$sField}]" class="help-block">(<?=\$this->oModel->{$sRelation}()?>)</span>
+            <?php endif; ?>
+        </p>
+EOT;
+
                 } else {
                     $arVars['clear_fields'] .= <<<EOT
 
@@ -230,6 +256,9 @@ EOT;
     </div>
             
 EOT;
+
+
+                    $arVars['text_fields'] .= '        <p><label>'.$arField['sTitle'].'</label>: <?=$this->oModel->'.$sField.'?></p>';
                 }
             }
         }

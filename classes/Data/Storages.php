@@ -325,17 +325,17 @@ class Storages extends \IslandFuture\Sfw\Only
         $from_add = '';
 
         $limit = '';
-        if (!empty($arParams['nPageSize'] )) {
+        if (!empty($arParams['iPageSize'] )) {
 
-            if (empty($arParams['nPage'] )) {
+            if (empty($arParams['iPage'] )) {
                 $offset = 0;
             }
             else
             {
-                $offset = ($arParams['nPage'] - 1) * $arParams['nPageSize'];
+                $offset = ($arParams['iPage'] - 1) * $arParams['iPageSize'];
             }
 
-            $limit = " LIMIT " . $offset . "," . $arParams['nPageSize'];
+            $limit = " LIMIT " . $offset . "," . $arParams['iPageSize'];
         }/* emd if */
 
 
@@ -440,8 +440,8 @@ class Storages extends \IslandFuture\Sfw\Only
      *      'arSort' => array(
      *          'tCreated' => 'desc'
      *      )
-     *      'nPageSize' => 30,
-     *      'nPage' => 1
+     *      'iPageSize' => 30,
+     *      'iPage' => 1
      *      
      * ));
      */
@@ -465,12 +465,12 @@ class Storages extends \IslandFuture\Sfw\Only
         if (empty( static::$arCacheTables[$sClassName][$sKeyCache] )
             || (isset($arSysOptions['nocache'] ) && $arSysOptions['nocache'])
         ) {
-            if (empty($arParametrs["nPageSize"])) {
-                $arParametrs['nPageSize'] = 100;
+            if (empty($arParametrs["iPageSize"])) {
+                $arParametrs['iPageSize'] = 100;
             }
 
-            if (empty($arParametrs['nPage'])) {
-                $arParametrs['nPage'] = 1;
+            if (empty($arParametrs['iPage'])) {
+                $arParametrs['iPage'] = 1;
             }
 
             if (empty($arParametrs['arFilter'])) {
@@ -520,11 +520,11 @@ class Storages extends \IslandFuture\Sfw\Only
         }
         static::initModel($arParametrs['sModel']);
 
-        if (isset($arParametrs['nPage'])) {
-            unset($arParametrs['nPage']);
+        if (isset($arParametrs['iPage'])) {
+            unset($arParametrs['iPage']);
         }
-        if (isset($arParametrs['nPageSize'])) {
-            unset($arParametrs['nPageSize']);
+        if (isset($arParametrs['iPageSize'])) {
+            unset($arParametrs['iPageSize']);
         }
         if (isset($arParametrs['arSort'])) {
             unset($arParametrs['arSort']);
@@ -582,8 +582,8 @@ class Storages extends \IslandFuture\Sfw\Only
      **/
     public static function getOne($arParametrs = array(), $arSysOptions = array() )
     {
-        $arParametrs['nPage'] = 1;
-        $arParametrs['nPageSize'] = 1;
+        $arParametrs['iPage'] = 1;
+        $arParametrs['iPageSize'] = 1;
         
         $rows = static::getAll($arParametrs, $arSysOptions);
 

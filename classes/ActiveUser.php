@@ -123,5 +123,65 @@ class ActiveUser extends Only
         }
         $_SESSION['SFW_USER'] = array();
     }
+    
+    /**
+     * Проверяем доступ на просмотр страницы $sPage
+     * @return boolean true - если доступ есть
+     * @throws \IslandFuture\Sfw\Exceptions\Http403
+     */
+    public function validateAccess($sPage, &$arAccess)
+    {
+        /* arAccess defined in \IslandFuture\Sfw\Application::init() method */
+        if (! $arAccess || sizeof($arAccess) == 0) {
+            return true;
+        }
+        if (substr($sPage,0,1) != '/') {
+            $sPage = '/'.$sPage;
+        }
+
+        /* если в классе юзера есть класс проверки доступа, то передаем управление туда */
+        if (static::$sUserClassName != 'none' && method_exists($this->oCurrentUser,'validateAccess')) {
+            return $this->oCurrentUser->validateAccess($sPage, $arAccess);
+        }
+
+        $iRoleId = $this->iRoleId;
+        $iStop = 30;
+        $isResult = false;
+        do {
+            if (! empty($arAccess[$sPage]))
+            {
+                foreach ($arAccess[$sPage] as $iGroup => $sGrant) {
+                    if ($iGroup == 0 && $sGrant == 'allow') {
+                        $isResult = true;
+                        break 2;
+                    }
+                    
+                    if (($iRoleId && $iGroup) == $iGroup) {
+                        $isResult = ($sGrant == 'allow' ? true : false);
+                        break 2;
+                    }
+                }
+            }
+            if( substr($sPage,-1) == '/') {
+                $sPage = substr($sPage,0,-1);
+            } else {
+                $iPos = strrpos($sPage,'/');
+                if ($iPos === false) {
+                    $sPage = '';
+                } else {
+                    $sPage = substr($sPage,0,$iPos+1);
+                }
+                
+            }
+            $iStop--;
+        } while($sPage > '' && $iStop > 0);
+
+        if ($isResult === false) {
+            throw new \IslandFuture\Sfw\Exceptions\Http403();
+        }
+        
+        return $isResult;
+    }
+
 }
 //end class ActiveUser

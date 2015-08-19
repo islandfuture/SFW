@@ -130,7 +130,7 @@ class Model
     public function __get($name)
     {        
         if (! $name) {
-			return null; 
+            return null;
         }
 
         if (key_exists($name, $this->arFields)) {
@@ -153,7 +153,7 @@ class Model
         }
     }
 
-    public function getOptionsList($sRelname, $selected = '', $where = null, $sViewField = 'name', $glue = ' / ')
+    public function getOptionsList($sRelname, $selected = '', $where = null, $sViewField = 'sName', $glue = ' / ')
     {
         $arRelations = $this->$sRelname(false); // $this->getRelations();
         $arResult = array();

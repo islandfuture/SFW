@@ -182,11 +182,12 @@ class Tools
     /**
      * Возвращает дату в человеко-читаемом виде
      *
-     * @var string|timestamp дата в строковом формате или таймстамп
+     * @param string|timestamp $date дата в строковом формате или таймстамп
+     * @param int $isSmart тип формата: 0 - без времени, 1 - время и дата, 2 - умный формат
      *
      * @return string
      */
-    public static function getHumanDate($date)
+    public static function getHumanDate($date, $isSmart=1)
     {
         $arMonth = array(
             1 => 'января',
@@ -210,11 +211,36 @@ class Tools
         $day = date('d', $date);
         $month = date('m', $date);
         $year = date('Y', $date);
-        if ($year == date('Y')) {
-            $year='';
+        
+        if ($isSmart == 1) {
+            if ($year == date('Y')) {
+                $year='';
+            }
+            return (int)$day.' '.$arMonth[ (int)$month ].' '.$year.' в '.date('H:i', $date);
         }
-            
-        return (int)$day.' '.$arMonth[ (int)$month ].' '.$year.' в '.date('H:i', $date);
+        
+        if ($isSmart == 0) {
+            if ($year == date('Y')) {
+                $year='';
+            }
+            return (int)$day.' '.$arMonth[ (int)$month ].' '.$year;
+        }
+        
+        $arNow = explode(',', date('Y,m,d'));
+        
+        if ($arNow[0] - $year < 2) {
+            $nowInDay = $arNow[0]*12*30 + $arNow[1]*30 + $arNow[2];
+            $dateInDay = $year*12*30 + $month*30 + $day;
+
+            if ($nowInDay - $dateInDay < 7 ) {
+                return (int)$day.' '.$arMonth[ (int)$month ].' '.$year.' в '.date('H:i', $date);
+            }
+            return (int)$day.' '.$arMonth[ (int)$month ].' '.$year;
+        } elseif ($arNow[0] - $year < 4) {
+            return $arMonth[ (int)$month ].' '.$year;
+        } else {
+            return $year;
+        }
     }
 
     public static function password_hash($sPass, $sAlgo='', $arOptions=array())

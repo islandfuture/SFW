@@ -44,10 +44,14 @@ class Storages extends \IslandFuture\Sfw\Only
         return true;
     }
 
-    public static function model($sClassName)
+    public static function model($sClassName,$arParams=null)
     {
         if (static::initModel($sClassName)) {
-            return new $sClassName;
+            if ($arParams) {
+                return new $sClassName($arParams);
+            } else {
+                return new $sClassName;
+            }
         }
         else
         {

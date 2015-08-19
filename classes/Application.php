@@ -140,7 +140,8 @@ class Application extends Only
             $sPath = $this->PATH_PAGES;
 
             $this->route();
-            $this->validateAccess($this->sCurPage);
+            $arAccess = $this->arAccess;
+            $isAccess = $session->validateAccess($this->sCurPage, $arAccess);
 
             ob_start();
             include $sPath.$this->sCurPage.'.php';
@@ -166,6 +167,9 @@ class Application extends Only
                 header('Content-type: text/html; charset=utf-8');
                 echo "Произошла ошибка. Разработчики уже уведомлены и работают над проблемой";
             }
+        } catch (\IslandFuture\Sfw\Exceptions\Http403 $e) {
+            header('HTTP/1.0 403 Forbidden');
+            die('Access denied '.$this->sCurPage);
         } catch (\Exception $e) {
             if ($this->debug == 'Y') {
                 header('Content-type: text/html; charset=utf-8');
@@ -629,11 +633,37 @@ class Application extends Only
                 $arCurRoute = $arCurRoute[$sPart];
             } elseif (is_numeric($sPart) && isset($arCurRoute[':num:'])) {
                 if (isset($arCurRoute[':num:']['+'])) {
-                    $_REQUEST[$arCurRoute[':num:']['+']] = $_GET[$arCurRoute[':num:']['+']] = $sPart;
+                    $sKey = $arCurRoute[':num:']['+'];
+                    if (isset($_GET[$sKey])) {
+                        if (! is_array($_GET[$sKey])) {
+                            $_GET[$sKey] = array($_GET[$sKey]);
+                        }
+                        $_GET[$sKey][] = $sPart;
+                        $_REQUEST[$sKey] = $_GET[$sKey];
+                    } else {
+                        $_REQUEST[$sKey] = $_GET[$sKey] = $sPart;
+                    }
                 }
                 
                 if (isset($arCurRoute[':num:']['=>'])) {
                     $arCurRoute = $arCurRoute[':num:']['=>'];
+                }
+            } elseif (is_string($sPart) && isset($arCurRoute[':str:'])) {
+                if (isset($arCurRoute[':str:']['+'])) {
+                    $sKey = $arCurRoute[':str:']['+'];
+                    if (isset($_GET[$sKey])) {
+                        if (! is_array($_GET[$sKey])) {
+                            $_GET[$sKey] = array($_GET[$sKey]);
+                        }
+                        $_GET[$sKey][] = $sPart;
+                        $_REQUEST[$sKey] = $_GET[$sKey];
+                    } else {
+                        $_REQUEST[$sKey] = $_GET[$sKey] = $sPart;
+                    }
+                }
+                
+                if (isset($arCurRoute[':str:']['=>'])) {
+                    $arCurRoute = $arCurRoute[':str:']['=>'];
                 }
             }
         }
@@ -646,31 +676,6 @@ class Application extends Only
 
         $this->arBlockVars['lasterror'] = $this->sCurPage;
         throw new \Exception('Страница: "'.$this->sCurPage.DIRECTORY_SEPARATOR.'index.php" или "'.DIRECTORY_SEPARATOR.$this->sCurPage.'.php" не найдена');
-    }
-    
-    
-    /**
-     * Проверяем доступ на просмотр текущей страницы
-     */
-    public function validateAccess()
-    {
-        /* arAccess defined in init method */
-        
-        $arAccess = $this->arAccess;
-        if (! $arAccess || sizeof($arAccess) == 0) {
-            return true;
-        }
-        /*
-        $sPage = $this->sCurPage;
-        do
-        {
-            if (! empty($arAccess[$sPage]))
-            {
-                
-            }
-        } while( $sPage > '' );
-        */
-        return false;
     }
 
 }

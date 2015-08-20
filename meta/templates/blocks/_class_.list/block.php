@@ -76,7 +76,7 @@ if (empty($arFilter['size'])) {
 }
 
 
-if (! $this->arFilter || ! sizeof($this->arFilter) == 0) {
+if (! is_array($this->arFilter) || sizeof($this->arFilter) == 0) {
     $this->arFilter = array();
 }
 

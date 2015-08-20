@@ -28,8 +28,10 @@ class myfileUploader
 
         if (isset($_GET[$this->sFileName])) {
             $this->file = new \IslandFuture\Sfw\File\qqUploadedFileXhr();
+            $this->file->sFileName = $sFileName;
         } elseif (isset($_FILES[$this->sFileName])) {
             $this->file = new \IslandFuture\Sfw\File\qqUploadedFileForm();
+            $this->file->sFileName = $sFileName;
         } else {
             $this->file = false; 
         }

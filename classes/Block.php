@@ -23,10 +23,10 @@ namespace IslandFuture\Sfw;
  * Output:
  *      <html>value1</html>
  */
-class Block extends Only
+class Block extends \IslandFuture\Sfw\Only
 {
     // @var array массив параметров используемых в блоке и потом в шаблоне
-    protected $arParams = array();
+    protected $_arParams = array();
     
     public $arBuffered = array();
     
@@ -45,7 +45,7 @@ class Block extends Only
     public function run($sBlockName, $arParams=array(), $arSysParams=array())
     {
         $this->iCur++;
-        $this->arParams[$this->iCur] = array();
+        $this->_arParams[$this->iCur] = array();
         $sTemplate = false;
         try
         {
@@ -54,7 +54,7 @@ class Block extends Only
             $oApp = \IslandFuture\Sfw\Application::one();
             
             if(is_array($arParams) ) {
-                $this->arParams[ $this->iCur ] = $arParams;
+                $this->_arParams[ $this->iCur ] = $arParams;
             }
             $arParams = array();
 
@@ -91,7 +91,7 @@ class Block extends Only
                 echo '<div class="sfw_block_cont sfw_block_'.$sPrefix.'" blockfile="'.$sFileName.'">';
             }
     
-            include $sFileName;
+            $oBlock->arBuffered[$sBlockName.':result'] = include $sFileName;
 
             if($sTemplate ) {
                 echo $this->show();
@@ -106,19 +106,19 @@ class Block extends Only
                 ob_end_clean();
             }
 
-            $this->arParams[$this->iCur] = array();      
+            $this->_arParams[$this->iCur] = array();      
             $this->iCur--;
         }
         catch( \PdoException $e)
         {
-            $this->arParams[$this->iCur] = array();      
+            $this->_arParams[$this->iCur] = array();      
             $this->iCur--;
             $oBlock->arBuffered[$sBlockName.':result'] = false;
             throw $e;
         }
         catch( \Exception $e)
         {
-            $this->arParams[$this->iCur] = array();      
+            $this->_arParams[$this->iCur] = array();      
             $this->iCur--;
             $oBlock->arBuffered[$sBlockName.':result'] = false;
             throw $e;
@@ -139,12 +139,12 @@ class Block extends Only
     
     public function __get($name)
     {
-        return isset($this->arParams[$this->iCur][$name]) ? $this->arParams[$this->iCur][$name] : '' ;
+        return isset($this->_arParams[$this->iCur][$name]) ? $this->_arParams[$this->iCur][$name] : '' ;
     }
 
     public function __set($name, $val)
     {
-        $this->arParams[$this->iCur][$name] = $val ;
+        $this->_arParams[$this->iCur][$name] = $val ;
     }
     
     /**
@@ -152,8 +152,8 @@ class Block extends Only
      */
     public function getParams()
     {
-        if (isset($this->arParams[$this->iCur])) {
-            return $this->arParams[$this->iCur];
+        if (isset($this->_arParams[$this->iCur])) {
+            return $this->_arParams[$this->iCur];
         }
         
         return array();
@@ -161,7 +161,7 @@ class Block extends Only
 
     public function clearParams()
     {
-        $this->arParams[$this->iCur] = array();
+        $this->_arParams[$this->iCur] = array();
         return $this;
     }
 

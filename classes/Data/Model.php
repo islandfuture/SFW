@@ -136,7 +136,6 @@ class Model
         if (key_exists($name, $this->arFields)) {
             return $this->arFields[$name];
         }
-
         throw new \RuntimeException('Unknown fields [' . $name . '] in class [' . get_class($this) . ']');
     }
 
@@ -530,6 +529,58 @@ class Model
         return Validator::isValidateModel($this);
     }
     
+    /** error functions **/
+
+    /**
+     * Добавляем ошибку
+     * @param string $sError      текст ошибки
+     * @param string $sField      название поля в котором обнаружена ошибка
+     * @return \IslandFuture\Sfw\Data\Model
+     */
+    public function addError($sError, $sField='_')
+    {
+        \IslandFuture\Sfw\Data\Storages::addError($sError, get_class($this), $sField);
+        return $this;
+    }
     
+    /**
+     * Проверяем, есть ли ошибка в каком-то поле или в целом в моделе
+     * @param string $sField      название поля которое проверяется (нужено указать "_" - для проверки общих ошибок)
+     * @return boolean
+     */
+    public function isError($sField='_')
+    {
+        return \IslandFuture\Sfw\Data\Storages::isError(get_class($this), $sField);
+    }
+
+    /**
+     * Проверяем, есть ли ошибка в каком-то поле или в целом в моделе
+     * @param string $sField      название поля которое проверяется (нужено указать "_" - для проверки общих ошибок)
+     * @return boolean
+     */
+    public function isErrors()
+    {
+        return \IslandFuture\Sfw\Data\Storages::isErrors(get_class($this));
+    }
+
+    /**
+     * Функция возвращает массив из текстов ошибок для указанного поля
+     *
+     * @return array 
+     */
+    public function getError($sField = '_', $isClear = true)
+    {
+        return \IslandFuture\Sfw\Data\Storages::getError(get_class($this), $sField, $isClear);
+    }
+
+    /**
+     * Функция возвращает массив из текстов ошибок для указанного поля
+     *
+     * @return array 
+     */
+    public function getErrors($isClear = false)
+    {
+        return \IslandFuture\Sfw\Data\Storages::getErrors(get_class($this), $isClear);
+    }
 }
 //end class

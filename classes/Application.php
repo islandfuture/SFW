@@ -11,7 +11,7 @@ namespace IslandFuture\Sfw;
  *
  * @example Application::one()->init()->run();
  */
-class Application extends Only
+class Application extends \IslandFuture\Sfw\Only
 {
     //@var Array массив параметров конфигурации
     private $arConfig;
@@ -138,7 +138,6 @@ class Application extends Only
             }
 
             $sPath = $this->PATH_PAGES;
-
             $this->route();
             $arAccess = $this->arAccess;
             $isAccess = $session->validateAccess($this->sCurPage, $arAccess);
@@ -167,14 +166,23 @@ class Application extends Only
                 header('Content-type: text/html; charset=utf-8');
                 echo "Произошла ошибка. Разработчики уже уведомлены и работают над проблемой";
             }
+        } catch (\IslandFuture\Sfw\Exceptions\Http404 $e) {
+            header('HTTP/1.0 404 Not found');
+            if (file_exists($sPath . '404.php')) {
+                include $sPath . '404.php';
+            } else {
+                die('Page not found. ' . $this->sCurPage);
+            }
         } catch (\IslandFuture\Sfw\Exceptions\Http403 $e) {
             header('HTTP/1.0 403 Forbidden');
             die('Access denied '.$this->sCurPage);
         } catch (\Exception $e) {
             if ($this->debug == 'Y') {
                 header('Content-type: text/html; charset=utf-8');
+
                 if (isset($e->xdebug_message)) {
                     echo '<table>'.$e->xdebug_message.'</table>';
+                    var_dump($e->getTrace());
                 } else {
                     echo "Exception: [".$e->getMessage()."] in file [".$e->getFile()."] in line ".$e->getLine();
                     var_dump($e->getTrace());
@@ -239,7 +247,7 @@ class Application extends Only
             }
         }
 
-    }//end function run
+    }//end function console
 
     // функция для автозагрузки классов
     public function appAutoload($sClassName)
@@ -311,113 +319,26 @@ class Application extends Only
     }
     
 
-    public function redirect()
+    public function redirect($sLocalUrl='')
     {
+        if ($sLocalUrl > '') {
+            $this->sCurPage = $sLocalUrl;
+            return header('Location: '.$this->sCurPage);
+        }
+
         if (! empty($_REQUEST['page'])) {
-            $this->cur_page = $_REQUEST['page'];
-            if (substr($this->cur_page, 0, 1) == '/') {
-                $this->cur_page = substr($this->cur_page, 1);
+            $this->sCurPage = $_REQUEST['page'];
+            if (substr($this->sCurPage, 0, 1) == '/') {
+                $this->sCurPage = substr($this->sCurPage, 1);
             }
 
-            if (substr($this->cur_page, -1, 1) == '/') {
-                $this->cur_page = substr($this->cur_page, 0, -1);
+            if (substr($this->sCurPage, -1, 1) == '/') {
+                $this->sCurPage = substr($this->sCurPage, 0, -1);
             }
             
         }//end if
         
-        header('Location: /index.php?page='.$this->cur_page);
-    }
-
-    /**
-     * @param $c array массив содержащий следующие значения:
-     *         EMAIL_HOST
-     *         EMAIL_PORT
-     *         EMAIL_USERNAME
-     *         EMAIL_PASSWORD
-     *         EMAIL_NEEDAUTH
-     *         EMAIL_CHARSET
-     *         EMAIL_CONTACT_NAME
-     *         EMAIL_TEMPLATE_DIR - если указан, то шаблон сообщения берется из указанной директории
-     */
-    // $this->email($row->email,'ACTIVATION',array('name' => $row->name, 'sex' => $row->sex_id, 'email' => $row->email, 'code' => $row->activation));
-    public function email($to_user, $template, $params, $c = null)
-    {
-        date_default_timezone_set('Europe/Moscow');
-        if (! class_exists('PHPMailer')) {
-            include_once $this->PATH_APP.'externals/phpmailer/class.phpmailer.php';
-        }
-        
-        if ($c === null) {
-            // 1 - group of Email settings
-            $configs = \IslandFuture\Sfw\Data\Storages::getAll(
-                array(
-                    'sModel'=>'Configs',
-                    'arFilter' => array(
-                        'iGroupId' => array('=' => 1)
-                    )
-                )
-            );
-        
-            $c = array();
-            foreach ($configs as $conf) {
-                $c[ $conf->name ] = $conf->value;
-            }//end foreach
-            //var_dump($c);
-        }
-        
-        die('ERROR!!! need re develop');
-        $tmpl = Only::one()->SFW_Objects()->getOne("Big_texts", "id in (SELECT id FROM configs WHERE name='EMAIL_TPL_".$template."')");
-        if ($tmpl ) {
-            $param = Only::one()->SFW_Objects()->getByPk('Configs', $tmpl->id);
-            // $subject = $param->value;
-            $subject = Only::one()->Template()->parseContent(stripslashes($param->value), $params);
-                                             
-            $mail             = new PHPMailer();
-            $mail->IsSMTP(); // telling the class to use SMTP
-            $mail->Host       =  $c['EMAIL_HOST']; //"mail.pulsplus.ru"; // SMTP server
-            $mail->SMTPDebug  = 0;                     // enables SMTP debug information (for testing)
-                                                       // 1 = errors and messages
-                                                       // 2 = messages only
-            $mail->SMTPAuth   = true;                  // enable SMTP authentication
-            if (isset($c['EMAIL_SECURE'])) {
-                $mail->SMTPSecure = $c['EMAIL_SECURE'];
-            }
-            $mail->Host       = $c['EMAIL_HOST']; //"mail.pulsplus.ru"; // sets the SMTP server
-            $mail->Port       = $c['EMAIL_PORT']; //25;                    // set the SMTP port for the GMAIL server
-            $mail->Username   = $c['EMAIL_USERNAME']; //"mypuls@pulsplus.ru"; // SMTP account username
-            $mail->Password   = $c['EMAIL_PASSWORD']; //"gfhjkm";        // SMTP account password
-            
-            $mail->CharSet = 'UTF-8';
-            
-            $mail->SetFrom($c['EMAIL_USERNAME'], $c['EMAIL_CONTACT_NAME']);
-            
-            $mail->AddReplyTo($c['EMAIL_USERNAME'], $c['EMAIL_CONTACT_NAME']);
-            
-            $mail->Subject    = $subject; //"PHPMailer Test Subject via smtp, basic with authentication";
-            
-            $mail->AltBody    = "To view the message, please use an HTML compatible email viewer!"; // optional, comment out and test
-            
-            $value = Only::one()->Template()->parseContent(stripslashes($tmpl->value), $params);
-            $mail->MsgHTML($value);
-            
-            $address = $to_user->email;
-            $mail->AddAddress($address, $to_user->name);
-
-            if(!$mail->Send()) {
-                $this->arBlockVars['lasterror'] = $mail->ErrorInfo;
-                return false;
-            } else {
-                //echo "Message sent!";
-                $this->arBlockVars['lasterror'] = '';
-                $this->arBlockVars['lastmessage'] = 'Message sent';
-                return true;
-            }
-            
-        } else {
-            $this->arBlockVars['lasterror'] = 'Не могу найти шаблон для письма: '.$template;
-            return false;
-        }
-        
+        return header('Location: /index.php?page='.$this->sCurPage);
     }
 
     /**
@@ -527,7 +448,7 @@ class Application extends Only
         }
 
         include $name;
-    }//end function run
+    }//end function test
 
     public function setTitle($title)
     {
@@ -665,17 +586,18 @@ class Application extends Only
                 if (isset($arCurRoute[':str:']['=>'])) {
                     $arCurRoute = $arCurRoute[':str:']['=>'];
                 }
+            } else {
+                $this->sCurPage .= '/'.$sPart;
+                $arCurRoute = array();
             }
         }
-        
         $this->sCurPage .= '/'.(isset($arCurRoute[':end:']) ? $arCurRoute[':end:'] : 'index');
-        
         if (file_exists($sPath.$this->sCurPage.'.php')) {
             return true;
         }
 
         $this->arBlockVars['lasterror'] = $this->sCurPage;
-        throw new \Exception('Страница: "'.$this->sCurPage.DIRECTORY_SEPARATOR.'index.php" или "'.DIRECTORY_SEPARATOR.$this->sCurPage.'.php" не найдена');
+        throw new \IslandFuture\Sfw\Exceptions\Http404('Страница: "'.$this->sCurPage.DIRECTORY_SEPARATOR.'index.php" или "'.DIRECTORY_SEPARATOR.$this->sCurPage.'.php" не найдена');
     }
 
 }

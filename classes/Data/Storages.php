@@ -657,22 +657,19 @@ class Storages extends \IslandFuture\Sfw\Only
             static::$arErrors[$sClassName][$sField] = array();
         }
         static::$arErrors[$sClassName][$sField][] = $sError;
-
     }//end function
     
     // возвращает TRUE если в модели и поля есть ошибки
-    public static function isError($sClassName = '_',$sField = '_') 
+    public static function isError($sClassName = '_', $sField = '_') 
     {
-        if
-        (isset(static::$arErrors)
-            && isset(static::$arErrors[$sClassName])
-            && isset(static::$arErrors[$sClassName][$sField])
-            && sizeof(static::$arErrors[$sClassName][$sField]) > 0
-        ) {
-            return true;
-        } else {
-            return false;
+        if (isset(static::$arErrors) && isset(static::$arErrors[$sClassName])) {
+            if (isset(static::$arErrors[$sClassName][$sField]) && sizeof(static::$arErrors[$sClassName][$sField]) > 0) {
+                return true;
+            } elseif ($sField == '*' && sizeof(static::$arErrors[$sClassName]) > 0) {
+                return true;
+            }
         }
+        return false;
     }
 
     /**
@@ -700,24 +697,15 @@ class Storages extends \IslandFuture\Sfw\Only
      *
      * @return array 
      */
-    public function getError($sClassName='_',$sField='_', $isClear=true) 
+    public static function getError($sClassName = '_', $sField = '_', $isClear = true) 
     {
-        if (isset(static::$arErrors[$model])
-            && isset(static::$arErrors[$model][$sField])
+        if (isset(static::$arErrors[$sClassName])
+            && isset(static::$arErrors[$sClassName][$sField])
         ) {
             $e = static::$arErrors[$sClassName][$sField];
             
             if ($isClear) {
-                static::$arErrors[$sClassName][$sField] = null;
-                unset(static::$arErrors[$sClassName][$sField]);
-
-                if (sizeof(static::$arErrors[$sClassName]) == 0) {
-                    unset(static::$arErrors[$sClassName]);
-                }
-                
-                if (sizeof(static::$arErrors) == 0) {
-                    static::$arErrors = array(); 
-                }
+                static::clearError($sClassName, $sField);
             }
             
             return $e;
@@ -727,53 +715,53 @@ class Storages extends \IslandFuture\Sfw\Only
     }//end function
 
     // @todo доделать 
-    public function getErrors($model='_', $isClear=false) 
+    public static function getErrors($sClassName='_', $isClear=false) 
     {
-        if ($model == '') {
-            
+        if ($sClassName == '') {
+            $e = static::$arErrors;
+        } elseif (isset(static::$arErrors[$sClassName])) {
+            $e = static::$arErrors[$sClassName];
         } else {
-            if (isset($this->errors)
-                && isset($this->errors[$model])
-                && $this->errors[$model]['ierr'] > 0
-            ) {
-                $e = $this->errors[$model];
-                if ($isClear) {
-                    unset($this->errors[$model]);
-                    $this->errors[$model] = null;
-                    $this->errors['ierr'] -= sizeof($e);
-                }
-                return $e;
-            } else {
-                return false;
-            }
+            $e = false;
+            $isClear = false;
         }
+        
+        if ($isClear) {
+            static::clearErrors($sClassName);
+        }
+        return $e;
     }//end function
 
     // стираем ошибку 
-    public function clearError($model='_',$field='_') 
+    public function clearError($sClassName = '_', $sField = '_') 
     {
-        if (isset($this->errors)
-            && isset($this->errors[$model])
-            && isset($this->errors[$model][$field])
-            && sizeof($this->errors[$model][$field]) > 0
-        ) {
-            $this->errors[$model]['ierr'] -= sizeof($this->errors[$model][$field]);
-            $this->errors['ierr'] -= sizeof($this->errors[$model][$field]);
-            unset($this->errors[$model][$field]);
-            $this->errors[$model][$field] = null;
+        if (isset(static::$arErrors[$sClassName]) && isset(static::$arErrors[$sClassName][$sField])) {
+            static::$arErrors[$sClassName][$sField] = null;
+            unset(static::$arErrors[$sClassName][$sField]);
+    
+            if (sizeof(static::$arErrors[$sClassName]) == 0) {
+                unset(static::$arErrors[$sClassName]);
+            }
+        }        
+
+        if (sizeof(static::$arErrors) == 0) {
+            static::$arErrors = array(); 
         }
     }//end function
 
     // стираем ошибки, если указана модель, то стираем ошибки, только указанной модели
-    public function clearErrors($model='') 
+    public function clearErrors($sClassName = '_') 
     {
-        if ($model == '') {
-            $this->errors = array('commons'=>array('ierr'=>0), 'ierr'=>0);
-        } elseif (isset($this->errors[$model])) {
-            $this->errors['ierr'] -= $this->errors[$model]['ierr'];
-            unset($this->errors[$model] );
-            $this->errors[$model] = array();
+        if ($sClassName == '') {
+            static::$arErrors = array(); 
+        } elseif (isset(static::$arErrors[$sClassName])) {
+            unset(static::$arErrors[$sClassName]);
+
+            if (sizeof(static::$arErrors) == 0) {
+                static::$arErrors = array(); 
+            }
         }
+
     }//end function
 
     public function isConnected()

@@ -279,7 +279,7 @@ class Tools
         return password_verify($sPass, $sHash);
     }
 
-    public static function getListFilesEx($sPath, $iDepth, $sNewPath,$arVars=array())
+    public static function getListFilesEx($sPath, $iDepth, $sNewPath, $arVars = array())
     {
         $arResult = array();
         if (! file_exists($sNewPath)) {
@@ -297,14 +297,25 @@ class Tools
                 foreach ($arVars as $key => $val) {
                     $sNewFile = str_replace($key, $val, $sFile);
                 }
-                $arTmp = self::getListFilesEx($sPath.$sFile.DIRECTORY_SEPARATOR, $iDepth+1, $sNewPath.$sNewFile.DIRECTORY_SEPARATOR, $arVars);
+                $arTmp = self::getListFilesEx($sPath.$sFile.DIRECTORY_SEPARATOR, $iDepth+1, $sNewPath . $sNewFile . DIRECTORY_SEPARATOR, $arVars);
                 $arResult = array_merge($arResult, $arTmp);
             } else {
-                $arResult[ $sPath.$sFile ] = $sNewPath.$sFile;
+                $arResult[ $sPath . $sFile ] = $sNewPath . $sFile;
             }
 
         }
         $oDir->close();
         return $arResult;
+    }
+    
+    public static function generatePassword($iMaxLen = 8)
+    {
+        $sAlphabet = 'qwertyuipasdfghjkzxcvbnm1234567890QWERTYUIPLJHGFDSAZCVBNM';
+        $sResult = '';
+        for($i = 0; $i < $iMaxLen; $i++) {
+            $iPos = rand(0, 56);
+            $sResult .= substr($sAlphabet, $iPos, 1);
+        }
+        return $sResult;
     }
 }

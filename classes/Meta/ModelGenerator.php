@@ -98,20 +98,29 @@ EOT;
             } else {
                 
                 $arVars['relations_fields'] .=<<<EOT
-                
+
     /**
      * @return \\${arRelation[2]}
      */    
-    public function ${sRelation}()
+    public function ${sRelation}(\$isOne=true)
     {
-        return \\IslandFuture\\Sfw\\Data\\Storages::getOne(
-            array(
-                'sModel' => '${arRelation[2]}',
-                'arFilter' => array(
-                    '${arRelation[3]}' => array('=' => \$this->${arRelation[1]} )
+        if( \$isOne ) {
+            return \\IslandFuture\\Sfw\\Data\\Storages::getOne(
+                array(
+                    'sModel' => '${arRelation[2]}',
+                    'arFilter' => array(
+                        '${arRelation[3]}' => array('=' => \$this->${arRelation[1]} )
+                    )
                 )
-            )
-        );
+            );
+        } else {
+            return \IslandFuture\Sfw\Data\Storages::getAll(
+                array(
+                    'sModel' => '${arRelation[2]}',
+                    'nPageSize' => 50
+                )
+            );
+        }
     }
     
 EOT;

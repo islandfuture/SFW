@@ -12,7 +12,7 @@ namespace IslandFuture\Sfw;
  *      \IslandFuture\Sfw\ActiveUser::one()->iRoleId = 1
  **/
 
-class ActiveUser extends Only
+class ActiveUser extends \IslandFuture\Sfw\Only
 {
     // @var string в свойстве хранится название класса, которое отвечает за хранение данных юзера в БД
     public static $sUserClassName = 'Users';
@@ -81,11 +81,13 @@ class ActiveUser extends Only
                 )
             );
 
-            $arFields = $this->oCurrentUser->__getFields();
-            foreach ($arFields as $sKey => $sVal) {
-                $_SESSION['SFW_USER'][$sKey] = $sVal;
+            if ($this->oCurrentUser) {
+                $arFields = $this->oCurrentUser->__getFields();
+                foreach ($arFields as $sKey => $sVal) {
+                    $_SESSION['SFW_USER'][$sKey] = $sVal;
+                }
+                $this->isSynchronized = true;
             }
-            $this->isSynchronized = true;
         }
 
         return $this->oCurrentUser;

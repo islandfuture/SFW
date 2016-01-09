@@ -32,6 +32,7 @@ class Generator extends Task
 
         $this->arFields = $arMeta['arFields'];
         $this->arRelations = $arMeta['arRelations'];
+
     }
     
     public function run()

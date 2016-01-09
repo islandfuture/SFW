@@ -17,7 +17,7 @@ abstract class Task
 
     public function __get($sParamName)
     {
-        if(empty($this->arParams[$sParamName]) )
+        if(!isset($this->arParams[$sParamName]) )
             $this->arParams[$sParamName] = '';
         
         return $this->arParams[$sParamName];

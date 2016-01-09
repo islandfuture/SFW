@@ -136,7 +136,9 @@ class Model
         if (key_exists($name, $this->arFields)) {
             return $this->arFields[$name];
         }
-        throw new \RuntimeException('Unknown fields [' . $name . '] in class [' . get_class($this) . ']');
+        $arTrace = debug_backtrace();
+        $e = new ErrorException('Unknown fields ' . get_class($this) . '::$' . $name, E_USER_ERROR, 1, $arTrace[0]['file'], $arTrace[0]['line']);
+        throw $e;
     }
 
     public function __set($name, $val)
@@ -148,7 +150,9 @@ class Model
         if (key_exists($name, $this->arFields)) {
             $this->arFields[$name] = $val;
         } else {
-            throw new \RuntimeException('Нельзя присвоить значение неизвестному полю [' . $name . '] в классе [' . get_class($this) . ']');
+            $arTrace = debug_backtrace();
+            $e = new ErrorException('Cannot assign '.$val.' to unknown fields ' . get_class($this) . '::$' . $name, E_USER_ERROR, 1, $arTrace[0]['file'], $arTrace[0]['line']);
+            throw $e;
         }
     }
 

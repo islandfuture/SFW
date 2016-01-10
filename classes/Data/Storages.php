@@ -65,7 +65,7 @@ class Storages extends \IslandFuture\Sfw\Only
      * @param array $arParams
      * @return string
      */
-    public static function generateWhereSQL($arParams )
+    public static function generateWhereSQL($arParams)
     {
 
         if (empty($arParams['sModel'])) {
@@ -97,85 +97,83 @@ class Storages extends \IslandFuture\Sfw\Only
             $arParams['arFilter'] = array();
         }
         
-        foreach($arParams['arFilter'] as $key => $value )
-        {
+        foreach ($arParams['arFilter'] as $key => $value) {
             if (key_exists($key, $arFields)) {
                 if (is_array($value)) {
 
-                    foreach($value as $op => $val )
-                    {
+                    foreach($value as $op => $val ) {
                         $op = strtolower($op);
 
-                        switch($op )
-                        {
-                        case 'not like':
-                        case 'like':
-                        case '>=':
-                        case '>':
-                        case '<':
-                        case '<=':
-                        case '=':
-                        case '!=':
-                            $sWhere .= " AND $table.`" . $key . "` " . $op . " '" . addslashes($val) . "'";
-                            break;
-                        case 'between':
-                            if (is_array($val)) {
-                                $sWhere .= " AND $table.`" . $key . "` " . $op . " '" . addslashes($val[0]) . "' and '" . addslashes($val[1]) . "'";
-                            } else {
-                                $sWhere .= " AND ($table.`" . $key . "` " . $op . " " . addslashes($val) . ")";
-                            }
-                            break;
-                        case '!in':
-                            if (is_array($val)) {
-                                foreach($val AS &$value )
-                                {
-                                    $value = addslashes($value);
+                        switch($op) {
+                            case 'not like':
+                            case 'like':
+                            case '>=':
+                            case '>':
+                            case '<':
+                            case '<=':
+                            case '=':
+                            case '!=':
+                                $sWhere .= " AND $table.`" . $key . "` " . $op . " '" . addslashes($val) . "'";
+                                break;
+                            case 'between':
+                                if (is_array($val)) {
+                                    $sWhere .= " AND $table.`" . $key . "` " . $op . " '" . addslashes($val[0]) . "' and '" . addslashes($val[1]) . "'";
+                                } else {
+                                    $sWhere .= " AND ($table.`" . $key . "` " . $op . " " . addslashes($val) . ")";
                                 }
-                                $val = "'" . implode("','", $val) . "'";
-                                $sWhere .= " AND $table.`" . $key . "` not in (" . $val . ")";
-                            }
-                            else
-                            {
-                                $sWhere .= " AND $table.`" . $key . "` not in (" . addslashes($val) . ")";
-                            }
-                            break;
-                        case 'not in':
-                        case 'in':
-                            /*
-                              if ( !is_array($val) && strpos($val,',')>0 ){
-                              $val = explode(',',$val);
-                              }
-                             */
-                            if (is_array($val)) {
-                                foreach($val AS &$value )
-                                {
-                                    $value = addslashes($value);
+                                break;
+                            case '!in':
+                                if (is_array($val)) {
+                                    foreach($val AS &$value )
+                                    {
+                                        $value = addslashes($value);
+                                    }
+                                    $val = "'" . implode("','", $val) . "'";
+                                    $sWhere .= " AND $table.`" . $key . "` not in (" . $val . ")";
                                 }
-                                $val = "'" . implode("','", $val) . "'";
-                                $sWhere .= " AND $table.`" . $key . "` " . $op . " (" . $val . ")";
-                            }
-                            else
-                            {
-                                $sWhere .= " AND $table.`" . $key . "` " . $op . " (" . addslashes($val) . ")";
-                            }
-                            break;
-                        default:
-                            if ($op == 0) {
-                                foreach($value AS &$val )
+                                else
                                 {
-                                    $val = addslashes($val);
+                                    $sWhere .= " AND $table.`" . $key . "` not in (" . addslashes($val) . ")";
                                 }
-                                $sWhere .= " AND $table.`" . $key . "` IN ('" . implode("','", $value) . "')";
-                                break 2;
-                            }
-                            else
-                            {
-                                foreach($val AS &$value )
+                                break;
+                            case 'not in':
+                            case 'in':
+                                /*
+                                  if ( !is_array($val) && strpos($val,',')>0 ){
+                                  $val = explode(',',$val);
+                                  }
+                                 */
+                                if (is_array($val)) {
+                                    foreach($val AS &$value )
+                                    {
+                                        $value = addslashes($value);
+                                    }
+                                    $val = "'" . implode("','", $val) . "'";
+                                    $sWhere .= " AND $table.`" . $key . "` " . $op . " (" . $val . ")";
+                                }
+                                else
                                 {
-                                    $value = addslashes($value);
+                                    $sWhere .= " AND $table.`" . $key . "` " . $op . " (" . addslashes($val) . ")";
                                 }
-                                $sWhere .= " AND $table.`" . $key . "` " . $op . " ('" . implode("','", $val) . "')";
-                            }
+                                break;
+                            default:
+                                if ($op == 0) {
+                                    foreach($value AS &$val )
+                                    {
+                                        $val = addslashes($val);
+                                    }
+                                    $sWhere .= " AND $table.`" . $key . "` IN ('" . implode("','", $value) . "')";
+                                    break 2;
+                                }
+                                else
+                                {
+                                    foreach($val AS &$value )
+                                    {
+                                        $value = addslashes($value);
+                                    }
+                                    $sWhere .= " AND $table.`" . $key . "` " . $op . " ('" . implode("','", $val) . "')";
+                                }
+                                break;
                         }
                     }
                 }
@@ -302,7 +300,7 @@ class Storages extends \IslandFuture\Sfw\Only
      * @param array $arParams
      * @return string
      */
-    public static function generateSelectSQL($arParams )
+    public static function generateSelectSQL($arParams)
     {
         if (empty($arParams['sModel'])) {
             throw new \Exception('Class of model not defined');

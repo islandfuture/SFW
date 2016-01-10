@@ -135,6 +135,109 @@ class Model
 
         if (key_exists($name, $this->arFields)) {
             return $this->arFields[$name];
+        } else {
+            $arRelations = static::getRelations();
+            if (isset($arRelations[$name])) {
+                $result = null;
+                $arRelation  = $arRelations[$name];
+
+                if ($arRelation[0] == '::virtual::') {
+                    /**
+                     * array('::virtual::','ONE','local_field',array('fieldvalue'=>array(val0,val1,...)))
+                     */
+                    $local_id       = $arRelation[2];
+                    $local_id_value = $this->$local_id;
+    
+                    if ($arRelation[1] == 'ONE' && is_array( $arRelation[3])) {
+                        $arValues = $arRelation[3];
+                        if (isset($arValues[$local_id_value])) {
+                            if (is_array($arValues[$local_id_value] ) && sizeof($arValues[$local_id_value]) == 1) {
+                                $result = $arValues[$local_id_value][0];
+                            } else {
+                                $result = $arValues[$local_id_value];
+                            }
+                        }
+                    }
+                } elseif ($arRelation[0] == '::table::') {
+                    
+                    if (! empty($arRelation[3])) {
+                        $classname = $arRelation[3];
+                    } else {
+                        throw new \Exception('Unknown model in relation ['.$name.']');
+                    }
+
+                    $local_id       = $arRelation[2];
+                    $local_id_value = $this->$local_id;
+
+                    if ($arRelation[1] == 'ONE') {
+                        $values = $arRelation[4];
+
+                        $arFilter = array($values => array('=' => $local_id_value));
+                        if (! empty($arRelation['sDatabase'])) {
+                            $result = \IslandFuture\Sfw\Data\Storages::getOne(
+                                array(
+                                    'sModel'    => $classname,
+                                    'arFilter'  => $arFilter,
+                                    'sDatabase' => $arRelation['sDatabase']
+                                )
+                            );
+                        } else {
+                            $result = \IslandFuture\Sfw\Data\Storages::getOne(
+                                array(
+                                    'sModel' => $classname,
+                                    'arFilter' => $arFilter
+                                )
+                            );
+                        }
+                        //end ONE
+                    } elseif ($arRelation[1] == 'MORE') {
+                        $values = $arRelation[4];
+
+                        $arParams = array(
+                            'sModel' => $classname
+                        );
+
+                        if ( is_array( $values ) && sizeof( $values ) == 3 ) {
+                            //если нужный нам объект связан с текущим как многие ко многим (то есть через доп.таблицу)
+                            // тогда в массиве описывается [0] - возвращаемый код в нужной таблице, [1] - промежуточная класс, [2] - поле по которому идет отбор
+                            $refParams = array(
+                                'sModel' => $values[1],
+                                'fields' => $values[0],
+                                'arFilter' => array(
+                                    $values[2] => array('=' => $local_id_value)
+                                )
+                            );
+                            $arParams['arFilter'] = array(
+                                'id' => array(
+                                    'in' => \IslandFuture\Sfw\Data\Storages::generateSelectSQL($refParams)
+                                )
+                            );
+                        } else {
+                            //если есть доп.условие для выбора списка значений
+                            $arParams['arFilter'] = array(
+                                $values => array('=' => $local_id_value)
+                            );
+
+                            if( !empty( $arRelation[5] ) && is_array( $arRelation[5] ) )
+                            {
+                                $arParams = array_merge_recursive( $arParams, $arRelation[5] );
+                            }
+    
+                            if( !empty( $arRelation['sDatabase'] ) )
+                            {
+                                $arParams['sDatabase'] = $arRelation['sDatabase'];
+                            }
+                        }
+                        $result = $classname::getAll( $arParams );
+                        if( !$result )
+                        {
+                            $result = array();
+                        }
+                        //end MORE
+                    }
+                }
+                return $result;
+            } 
         }
         $arTrace = debug_backtrace();
         $e = new ErrorException('Unknown fields ' . get_class($this) . '::$' . $name, E_USER_ERROR, 1, $arTrace[0]['file'], $arTrace[0]['line']);
@@ -158,21 +261,81 @@ class Model
 
     public function getOptionsList($sRelname, $selected = '', $where = null, $sViewField = 'sName', $glue = ' / ')
     {
-        $arRelations = $this->$sRelname(false); // $this->getRelations();
+        //$arRelations = $this->$sRelname(false); // $this->getRelations();
+        $arRelations = static::getRelations();
         $arResult = array();
-
-        if ($arRelations) {
-
-            foreach ($arRelations as $idx => $mRelation) {
-                if (is_array($mRelation)) {
-                    $arResult[] = '<option value="' . $idx . '" ' . ($idx == $selected ? 'selected="selected"' : '') . '>' . $mRelation[0] . '</option>';
-                } else {
-                    $sKey = $mRelation::getIdName();
-                    $arResult[] = '<option value="' . $mRelation->{$sKey} . '" ' . ($mRelation->{$sKey} == $selected ? 'selected="selected"' : '') . '>' . $mRelation->{$sViewField} . '</option>';
+        if (isset($arRelations[$sRelname])) {
+            $arRelation = $arRelations[$sRelname];
+            if( $arRelation[0] == '::virtual::' )
+            {
+                foreach ($arRelation[3] as $idx => $mRelation) {
+                    if (is_array($mRelation)) {
+                        $arResult[] = '<option value="' . $idx . '" ' . ($idx == $selected ? 'selected="selected"' : '') . '>' . $mRelation[0] . '</option>';
+                    } else {
+                        $sKey = $mRelation::getIdName();
+                        $arResult[] = '<option value="' . $mRelation->{$sKey} . '" ' . ($mRelation->{$sKey} == $selected ? 'selected="selected"' : '') . '>' . $mRelation->{$sViewField} . '</option>';
+                    }
+                }/* end foreach */
+            }
+            elseif( $arRelation[0] == '::table::' )
+            {
+                if( $arRelation[1] == 'ONE' )
+                {
+                    $local_id = $arRelation[2];
+                    $class    = $arRelation[3];
+                    $value    = $view_field;
+                    if( $selected == '' )
+                    {
+                        $select = $this->__get( $local_id );
+                    }
+                    else
+                    {
+                        $select = $selected;
+                    }
+                    $key = $arRelation[4];
+    
+                    if( is_array( $view_field ) )
+                    {
+                        foreach( $view_field as $key => $val )
+                        {
+                            if( empty( $val ) )
+                            {
+                                $val = 'asc';
+                            }
+                            $sort[$key] = $val;
+                        }
+                    }
+                    else
+                    {
+                        $sort[$view_field] = 'asc';
+                    }
+    
+                    $arParams = array(
+                        'sModel' => $class,
+                        'arSort' => $sort,
+                        'arFilter' => is_array( $where ) ? $where : array()
+                    );
+                    
+                    foreach (\IslandFuture\Sfw\Data\Storages::getAll($arParams) as $res) {
+                        if( is_array( $view_field ) )
+                        {
+                            $str = array();
+                            foreach( $view_field as $val )
+                            {
+                                $str[] = $res->{$val};
+                            }
+                            $str		 = implode( ' / ', $str );
+                            $arResult[]	 = '<option value="' . $res->{$key} . '" ' . ($res->{$key} == $select ? 'selected="selected"' : '') . '>' . $str . '</option>';
+                        }
+                        else
+                        {
+                            $arResult[] = '<option value="' . $res->{$key} . '" ' . ($res->{$key} == $select ? 'selected="selected"' : '') . '>' . $res->{$value} . '</option>';
+                        }
+                    }//end foreach
                 }
-            }/* end foreach */
-            
+            }
         }
+
 
         return implode("\n", $arResult);
     }
@@ -218,8 +381,8 @@ class Model
         /*
          * Выставляем базу и таблицу для запроса
          */
-        if (! empty($arParams['database'])) {
-            $sTable = '`' . $arParams['database'] . '`.`' . static::getTable() . '`';
+        if (! empty($arParams['sDatabase'])) {
+            $sTable = '`' . $arParams['sDatabase'] . '`.`' . static::getTable() . '`';
         } elseif (static::getDatabase() > '') {
             $sTable = '`' . static::getDatabase() . '`.`' . static::getTable() . '`';
         } else {
